@@ -3,6 +3,8 @@ from sqlalchemy.orm import Session
 from app.dependencies import get_db
 from app.modules.platos.schemas import CreatePlato,UpdatePlato,ResponsePlato, ResponsePlatos, ActivoUpdate
 from app.modules.platos import platos as crud_platos
+from app.models.user import User
+from app.modules.auth.auth import get_current_user
 
 router = APIRouter( prefix="/platos", tags=["Platos"])
 
@@ -49,3 +51,14 @@ def cambiar_activo(id:int, data:ActivoUpdate, db:Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Plato no encontrado")
     
     return {"ok":True}
+
+@router.get("/{plato_id}/negocio",response_model=ResponsePlato)
+def obtener_plato_negocio(
+    plato_id:int,
+    db:Session = Depends(get_db),
+    current_user: User =Depends(get_current_user)
+):
+    plato = crud_platos.get_plato_negocio_mesa(db,plato_id,current_user)
+    if not plato:
+        raise HTTPException(404, "Plato no encontrado")
+    return plato

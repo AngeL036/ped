@@ -20,6 +20,19 @@ def get_detalle(db:Session, pedido_id:int):
 def get_pedido_mesa(db:Session,mesa_id):
     return  db.query(Plato).filter_by(mesa_id).all()
 
+def get_pedido_activo_mesa(db:Session, mesa_id:int):
+    pedido = db.query(Pedido).filter(
+            Pedido.mesa_id == mesa_id,
+            Pedido.estado == "abierto"
+        ).first()
+    if not pedido:
+        raise HTTPException(
+        status_code=404,
+        detail="No hay pedidos"
+        )
+    return pedido.detalles
+    
+    
 def crear_pedido_mesa(db:Session,usuario_id:int,mesa_id:int,pedido_data:PedidoItemCreate):
     try:
         user = db.query(User).filter(User.id == usuario_id).first()
@@ -28,9 +41,6 @@ def crear_pedido_mesa(db:Session,usuario_id:int,mesa_id:int,pedido_data:PedidoIt
         status_code=400,
         detail="El usuario no existe"
         )
-        
-        
-        
         empleado = db.query(Empleado).filter(Empleado.user_id == user.id).first()
         if not empleado:
                 raise HTTPException(400, "El usuario no es empleado")
@@ -130,4 +140,6 @@ def crear_pedido(db:Session,usuario_id:int,pedido_data:PedidoItemCreate):
         db.rollback()
         print(" ERROR:", e)
         raise
+
+
 

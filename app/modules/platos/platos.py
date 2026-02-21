@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from app.models.plato import Plato
+from app.models.user import User
 from app.modules.platos.schemas import CreatePlato,UpdatePlato
 
 def get_platos(db:Session):
@@ -7,6 +8,15 @@ def get_platos(db:Session):
 
 def get_plato(db:Session, plato_id: int):
     return db.query(Plato).filter( Plato.id == plato_id).first()
+
+def get_plato_negocio_mesa(db:Session,plato_id:int,user:User):
+    empleado = user.empleado
+    if not empleado:
+        return None
+    return db.query(Plato).filter(
+        Plato.id == plato_id,
+        Plato.negocio_id == empleado.negocio_id
+    ).first()
 
 def create_plato(db:Session, plato:CreatePlato):
     #nuevo_plato = Plato(**plato.model_dump())

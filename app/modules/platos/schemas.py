@@ -20,7 +20,10 @@ class UpdatePlato(BaseModel):
 
 class ResponsePlato(BaseModel):
     id:int
-    
+    nombre:str
+    precio:Decimal
+    descripcion:str
+    activo:bool
     class Config:
         from_attributes =True
 

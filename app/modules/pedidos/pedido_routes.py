@@ -22,8 +22,11 @@ def obtener_pedido(pedido_id:int,db:Session = Depends(get_db)):
 
 @router.get("/{pedido_id}",response_model=list[DetalleItem])
 def obtenerDetalles(pedido_id:int,db:Session = Depends(get_db)):
-    print("aqui se llego")
     return crud.get_detalle(db,pedido_id)
+
+@router.get("/mesa/{mesa_id}", response_model=list[DetalleItem])
+def obtenerPedidoMesa(mesa_id:int,db:Session = Depends(get_db)):
+    return crud.get_pedido_activo_mesa(db,mesa_id)
 
 @router.post("/", status_code=201)
 def create(pedido: PedidoItemCreate,db:Session = Depends(get_db)):
