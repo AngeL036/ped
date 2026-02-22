@@ -31,7 +31,7 @@ def get_pedido_activo_mesa(db:Session, mesa_id:int):
         .first()
     )
     if not pedido:
-        raise HTTPException(status_code=404, detail="No hay pedidos activos para esta mesa")
+        return []
     return pedido.detalles
 
 
@@ -98,6 +98,26 @@ def cerrar_pedido(db: Session, mesa_id: int):
     return pedido
 
 
+def actualizar_estado_pedido(db: Session, pedido_id: int, nuevo_estado: str):
+    """Actualizar el estado de un pedido"""
+    estados_validos = ["abierto", "pendiente", "en_preparacion", "listo", "servido", "cerrado", "cancelado"]
+    
+    if nuevo_estado not in estados_validos:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Estado inválido. Estados permitidos: {', '.join(estados_validos)}"
+        )
+    
+    pedido = db.query(Pedido).filter(Pedido.id == pedido_id).first()
+    if not pedido:
+        raise HTTPException(status_code=404, detail="Pedido no encontrado")
+    
+    pedido.estado = nuevo_estado
+    db.commit()
+    db.refresh(pedido)
+    return pedido
+
+
 def crear_pedido_mesa(db:Session,usuario_id:int,mesa_id:int,pedido_data:PedidoItemCreate):
     try:
         user = db.query(User).filter(User.id == usuario_id).first()
@@ -148,7 +168,7 @@ def crear_pedido_mesa(db:Session,usuario_id:int,mesa_id:int,pedido_data:PedidoIt
             "message":"Pedido confirmado",
             "pedido_id":pedido.id,
             "total":pedido.total
-            }   
+        }   
     except Exception as e:
         db.rollback()
         print(" ERROR:", e)
@@ -182,7 +202,7 @@ def crear_pedido(db:Session,usuario_id:int,pedido_data:PedidoItemCreate):
             
             precio = platillo.precio * item.cantidad
             total = total + precio
-            subtotal = item.cantidad * item.precio
+            subtotal = item.cantidad * platillo.precio
             precio_unitario = platillo.precio
             detalle = DetallePedido(
                 pedido_id = pedido.id,

@@ -3,14 +3,23 @@ from fastapi import Depends,APIRouter,HTTPException
 from app.dependencies import get_db
 from sqlalchemy.orm import Session
 from app.modules.pedidos import crud
+from pydantic import BaseModel
 
 
 router = APIRouter(prefix="/pedidos", tags=["Pedidos"])
 
 
+class ActualizarEstadoPedido(BaseModel):
+    estado: str
+
+
 @router.get("/",response_model=list[ResponsePedido])
 def listar_pedidos(db:Session = Depends(get_db)):
     return crud.get_pedidos(db)
+
+@router.get("/mesa/{mesa_id}", response_model=list[DetalleOut])
+def obtenerPedidoMesa(mesa_id:int,db:Session = Depends(get_db)):
+    return crud.get_pedido_activo_mesa(db,mesa_id)
 
 @router.get("/{pedido_id}/info", response_model=ResponsePedido)
 def obtener_pedido(pedido_id:int,db:Session = Depends(get_db)):
@@ -24,9 +33,10 @@ def obtener_pedido(pedido_id:int,db:Session = Depends(get_db)):
 def obtenerDetalles(pedido_id:int,db:Session = Depends(get_db)):
     return crud.get_detalle(db,pedido_id)
 
-@router.get("/mesa/{mesa_id}", response_model=list[DetalleOut])
-def obtenerPedidoMesa(mesa_id:int,db:Session = Depends(get_db)):
-    return crud.get_pedido_activo_mesa(db,mesa_id)
+@router.patch("/{pedido_id}/estado", response_model=ResponsePedido)
+def actualizar_estado(pedido_id:int, data: ActualizarEstadoPedido, db:Session = Depends(get_db)):
+    """Actualizar el estado de un pedido"""
+    return crud.actualizar_estado_pedido(db, pedido_id, data.estado)
 
 @router.post("/", status_code=201)
 def create(pedido: PedidoItemCreate,db:Session = Depends(get_db)):

@@ -13,9 +13,9 @@ class CreatePlato(BaseModel):
     descripcion:str
 
 class UpdatePlato(BaseModel):
-    nombre: str  | None = None
+    nombre: str | None = None
     precio: Decimal | None = None
-    description: str | None = None
+    descripcion: str | None = None
     cantidad: int | None = None
 
 class ResponsePlato(BaseModel):
@@ -25,7 +25,7 @@ class ResponsePlato(BaseModel):
     descripcion:str
     activo:bool
     class Config:
-        from_attributes =True
+        orm_mode = True
 
 class ResponsePlatos(BaseModel):
     id:int
@@ -35,7 +35,7 @@ class ResponsePlatos(BaseModel):
     
     activo:bool
     class Config:
-        from_attributes =True
+        orm_mode = True
 
 class ActivoUpdate(BaseModel):
     activo:bool

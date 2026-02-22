@@ -1,23 +1,43 @@
 from fastapi import APIRouter,Depends, HTTPException
 from app.modules.mesas import crud
-from app.modules.mesas.schemas import ResponseMesa,createMesa
+from app.modules.mesas.schemas import ResponseMesa, createMesa, UpdateMesa
 from app.dependencies import get_db
 from sqlalchemy.orm import Session
 
 
 router = APIRouter(prefix="/mesas", tags=["Mesas"])
 
+
 @router.get("/", response_model=list[ResponseMesa])
 def list_mesas(db:Session = Depends(get_db)):
+    """Obtener todas las mesas"""
     return crud.get_mesas(db)
+
 
 @router.get("/{mesa_id}", response_model=ResponseMesa)
 def obtener_mesa(mesa_id:int, db:Session = Depends(get_db)):
-    mesa = crud.get_mesa(db,mesa_id)
-    if not mesa:
-        raise HTTPException(status_code=400, detail="Mesa no encontrado")
-    return mesa
+    """Obtener una mesa específica"""
+    return crud.get_mesa(db, mesa_id)
+
 
 @router.post("/",response_model=ResponseMesa, status_code=201)
 def crear_mesa(mesa:createMesa, db:Session = Depends(get_db)):
-    return crud.create_mesa(db,mesa)
+    """Crear una nueva mesa"""
+    return crud.create_mesa(db, mesa)
+
+
+@router.put("/{mesa_id}", response_model=ResponseMesa)
+def actualizar_mesa(
+    mesa_id: int,
+    datos: UpdateMesa,
+    db:Session = Depends(get_db)
+):
+    """Actualizar datos de una mesa"""
+    return crud.update_mesa(db, mesa_id, datos)
+
+
+@router.delete("/{mesa_id}", status_code=200)
+def eliminar_mesa(mesa_id:int, db:Session = Depends(get_db)):
+    """Eliminar una mesa"""
+    return crud.delete_mesa(db, mesa_id)
+

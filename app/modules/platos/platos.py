@@ -18,15 +18,14 @@ def get_plato_negocio_mesa(db:Session,plato_id:int,user:User):
         Plato.negocio_id == empleado.negocio_id
     ).first()
 
-def create_plato(db:Session, plato:CreatePlato):
-    #nuevo_plato = Plato(**plato.model_dump())
+def create_plato(db:Session, plato:CreatePlato, negocio_id: int, categoria_id: int | None = None):
+    """Crear un nuevo plato"""
     nuevo_plato = Plato(
         nombre=plato.nombre,
         precio=plato.precio,
         descripcion=plato.descripcion,
-       
-        negocio_id=1,      # ← dato estático de prueba
-        categoria_id=1     # ← dato estático de prueba
+        negocio_id=negocio_id,
+        categoria_id=categoria_id
     )
     db.add(nuevo_plato)
     db.commit()
@@ -34,8 +33,14 @@ def create_plato(db:Session, plato:CreatePlato):
     return nuevo_plato
 
 def update_plato(db:Session, plato_db: Plato, datos:UpdatePlato):
-    for key, value in datos.model_dump(exclude_unset=True).items():
-        setattr(plato_db,key, value)
+    # support both pydantic v2 (.model_dump) and v1 (.dict)
+    if hasattr(datos, "model_dump"):
+        items = datos.model_dump(exclude_unset=True)
+    else:
+        items = datos.dict(exclude_unset=True)
+
+    for key, value in items.items():
+        setattr(plato_db, key, value)
 
     db.commit()
     db.refresh(plato_db)

@@ -16,12 +16,20 @@ def lista_platos(db:Session = Depends(get_db)):
 def obtener_plato(plato_id:int, db:Session = Depends(get_db)):
     plato = crud_platos.get_plato(db,plato_id)
     if not plato:
-        raise HTTPException(status_code=400, detail="Plano no encontrado")
+        raise HTTPException(status_code=400, detail="Plato no encontrado")
     return plato
 
 @router.post("/",response_model=ResponsePlato, status_code=201)
-def crear_plato(plato: CreatePlato, db:Session = Depends(get_db)):
-    return crud_platos.create_plato(db,plato)
+def crear_plato(
+    plato: CreatePlato,
+    db:Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    if not current_user.empleado:
+        raise HTTPException(status_code=403, detail="Solo los empleados pueden crear platos")
+    
+    negocio_id = current_user.empleado.negocio_id
+    return crud_platos.create_plato(db, plato, negocio_id)
 
 @router.put("/{plato_id}", response_model=ResponsePlato)
 def actualizar_plato(

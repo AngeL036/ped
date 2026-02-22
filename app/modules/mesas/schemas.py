@@ -5,11 +5,18 @@ class createMesa(BaseModel):
     negocio_id: int
     numero: int
     capacidad: int
+
+
+class UpdateMesa(BaseModel):
+    numero: int | None = None
+    capacidad: int | None = None
     
+
 class ResponseMesa(BaseModel):
-    numero : int
+    id: int
+    numero: int
     capacidad: int
-    estado:str
+    estado: str
 
     class Config:
-        from_attributes = True
+        orm_mode = True
