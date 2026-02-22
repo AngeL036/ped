@@ -13,7 +13,7 @@ class Pedido(Base):
     mesero_id = Column(Integer, ForeignKey("empleados.id"))
 
     total = Column(Numeric(10, 2), default=0)
-    estado = Column(String(20), default="abierto")
+    estado = Column(String(20), default="pendiente")
     # abierto, en_cocina, servido, cerrado, cancelado
 
     created_at = Column(

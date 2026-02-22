@@ -16,4 +16,4 @@ class DetallePedido(Base):
     subtotal = Column(Numeric(10, 2), nullable=False)
 
     pedido = relationship("Pedido", back_populates="detalles")
-    plato = relationship("Plato", back_populates="detalles")
+    platillo = relationship("Plato", back_populates="detalles")

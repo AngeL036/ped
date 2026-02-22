@@ -16,4 +16,4 @@ class Plato(Base):
 
     negocio = relationship("Negocio", back_populates="platos")
     categoria = relationship("Categoria", back_populates="platos")
-    detalles = relationship("DetallePedido", back_populates="plato")
+    detalles = relationship("DetallePedido", back_populates="platillo")

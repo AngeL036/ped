@@ -37,5 +37,21 @@ class DetalleItem(BaseModel):
 
 class ResponseDetalle(BaseModel):
     items:list[DetalleItem]
-    
+
+class PlatilloOut(BaseModel):
+    id:int
+    nombre:str
+    precio:float
+
+    class Config:
+        orm_mode = True
+
+class DetalleOut(BaseModel):
+    id:int
+    cantidad:float
+    precio_unitario:float
+    platillo: PlatilloOut
+
+    class Config:
+        orm_mode = True
 

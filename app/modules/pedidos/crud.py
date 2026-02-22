@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from app.models.pedido import Pedido
 from app.models.empleado import Empleado
 from app.models.user import User
@@ -21,18 +21,83 @@ def get_pedido_mesa(db:Session,mesa_id):
     return  db.query(Plato).filter_by(mesa_id).all()
 
 def get_pedido_activo_mesa(db:Session, mesa_id:int):
-    pedido = db.query(Pedido).filter(
+    pedido = (
+        db.query(Pedido)
+        .options(joinedload(Pedido.detalles).joinedload(DetallePedido.platillo))
+        .filter(
             Pedido.mesa_id == mesa_id,
             Pedido.estado == "abierto"
-        ).first()
-    if not pedido:
-        raise HTTPException(
-        status_code=404,
-        detail="No hay pedidos"
         )
+        .first()
+    )
+    if not pedido:
+        raise HTTPException(status_code=404, detail="No hay pedidos activos para esta mesa")
     return pedido.detalles
+
+
+def get_or_create_pedido_activo(db:Session, mesa_id:int,negocio_id:int):
+    pedido = (
+        db.query(Pedido)
+        .filter(
+            Pedido.mesa_id == mesa_id,
+            Pedido.estado == "abierto"
+        )
+        .first()
+    )
+    if pedido:
+        return pedido
+    pedido = Pedido(
+            mesa_id=mesa_id,
+            negocio_id=negocio_id,
+            estado="abierto",
+            total=0
+        )
+    db.add(pedido)
+    db.commit()
+    db.refresh(pedido)
     
+    return pedido
+def agregar_plato(db:Session,mesa_id:int,negocio_id:int,item):
+    pedido = get_or_create_pedido_activo(db,mesa_id,negocio_id)
+
+    plato = db.query(Plato).get(item.platillo_id)
+    subtotal = plato.precio * item.cantidad
+
+    detalle = DetallePedido(
+        pedido_id=pedido.id,
+        platillo_id=plato.id,
+        cantidad=item.cantidad,
+        precio_unitario=plato.precio,
+        subtotal=subtotal
+    )
+    pedido.total += subtotal
+
+    db.add(detalle)
+    db.commit()
     
+    return pedido
+
+def cerrar_pedido(db: Session, mesa_id: int):
+
+    pedido = (
+        db.query(Pedido)
+        .filter(
+            Pedido.mesa_id == mesa_id,
+            Pedido.estado == "abierto"
+        )
+        .first()
+    )
+
+    if not pedido:
+        raise HTTPException(404, "No hay pedido abierto")
+
+    pedido.estado = "cerrado"
+
+    db.commit()
+
+    return pedido
+
+
 def crear_pedido_mesa(db:Session,usuario_id:int,mesa_id:int,pedido_data:PedidoItemCreate):
     try:
         user = db.query(User).filter(User.id == usuario_id).first()

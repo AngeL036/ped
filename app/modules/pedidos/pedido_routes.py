@@ -1,4 +1,4 @@
-from .schemas import PedidoItemCreate, ResponsePedido, DetalleItem,PedidoMesa
+from .schemas import PedidoItemCreate, ResponsePedido, DetalleItem,PedidoMesa, DetalleOut
 from fastapi import Depends,APIRouter,HTTPException
 from app.dependencies import get_db
 from sqlalchemy.orm import Session
@@ -24,7 +24,7 @@ def obtener_pedido(pedido_id:int,db:Session = Depends(get_db)):
 def obtenerDetalles(pedido_id:int,db:Session = Depends(get_db)):
     return crud.get_detalle(db,pedido_id)
 
-@router.get("/mesa/{mesa_id}", response_model=list[DetalleItem])
+@router.get("/mesa/{mesa_id}", response_model=list[DetalleOut])
 def obtenerPedidoMesa(mesa_id:int,db:Session = Depends(get_db)):
     return crud.get_pedido_activo_mesa(db,mesa_id)
 
