@@ -17,7 +17,6 @@ class PedidoItemCreate(BaseModel):
 class PedidoMesa(BaseModel):
     """Crear pedido para una mesa"""
     items: list[PedidoItem]
-    user_id: int
     mesa_id: int
     
 

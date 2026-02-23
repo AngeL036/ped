@@ -6,6 +6,9 @@ from app.modules.platos.schemas import CreatePlato,UpdatePlato
 def get_platos(db:Session):
     return db.query(Plato).all()
 
+def get_platos_activos(db:Session):
+    return db.query(Plato).filter(Plato.activo == True).all()
+
 def get_plato(db:Session, plato_id: int):
     return db.query(Plato).filter( Plato.id == plato_id).first()
 
@@ -33,11 +36,8 @@ def create_plato(db:Session, plato:CreatePlato, negocio_id: int, categoria_id: i
     return nuevo_plato
 
 def update_plato(db:Session, plato_db: Plato, datos:UpdatePlato):
-    # support both pydantic v2 (.model_dump) and v1 (.dict)
-    if hasattr(datos, "model_dump"):
-        items = datos.model_dump(exclude_unset=True)
-    else:
-        items = datos.dict(exclude_unset=True)
+    # use model_dump for pydantic v2
+    items = datos.model_dump(exclude_unset=True)
 
     for key, value in items.items():
         setattr(plato_db, key, value)

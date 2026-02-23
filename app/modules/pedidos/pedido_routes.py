@@ -1,3 +1,5 @@
+from app.modules.auth.auth import get_current_user
+from app.models.user import User
 from .schemas import PedidoItemCreate, ResponsePedido, DetalleItem,PedidoMesa, DetalleOut
 from fastapi import Depends,APIRouter,HTTPException
 from app.dependencies import get_db
@@ -53,4 +55,12 @@ def crearPedidoMesa(pedido: PedidoMesa, db:Session = Depends(get_db)):
         usuario_id=pedido.user_id,
         mesa_id=pedido.mesa_id,
         pedido_data=pedido
+    )
+@router.post("/mesa/", response_model=ResponsePedido)
+def agregar_platillo_mesa(pedido:PedidoMesa,current_user: User =Depends(get_current_user), db: Session = Depends(get_db)):
+    return crud.agregar_plato(
+        db=db,
+        mesa_id = pedido.mesa_id,
+        negocio_id=current_user.empleado.negocio_id,
+        item=pedido.items[0] if pedido.items else None
     )

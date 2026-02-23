@@ -57,10 +57,18 @@ def get_or_create_pedido_activo(db:Session, mesa_id:int,negocio_id:int):
     db.refresh(pedido)
     
     return pedido
+
 def agregar_plato(db:Session,mesa_id:int,negocio_id:int,item):
+    if not item:
+        raise HTTPException(400,"No se proporcionó ningún plato para agregar")
+    
     pedido = get_or_create_pedido_activo(db,mesa_id,negocio_id)
 
-    plato = db.query(Plato).get(item.platillo_id)
+    #plato = db.query(Plato).get(item.platillo_id)
+    plato = db.get(Plato,item.platillo_id)
+    if not plato:
+        raise HTTPException(404, f"Platillo con ID {item.platillo_id} no encontrado")
+    
     subtotal = plato.precio * item.cantidad
 
     detalle = DetallePedido(
@@ -74,6 +82,7 @@ def agregar_plato(db:Session,mesa_id:int,negocio_id:int,item):
 
     db.add(detalle)
     db.commit()
+    db.refresh(pedido)
     
     return pedido
 

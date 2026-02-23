@@ -12,6 +12,10 @@ router = APIRouter( prefix="/platos", tags=["Platos"])
 def lista_platos(db:Session = Depends(get_db)):
     return crud_platos.get_platos(db)
 
+@router.get("/activos", response_model=list[ResponsePlatos])
+def lista_platos_activos(db:Session = Depends(get_db)):
+    return crud_platos.get_platos_activos(db)
+
 @router.get("/{plato_id}", response_model=ResponsePlato)
 def obtener_plato(plato_id:int, db:Session = Depends(get_db)):
     plato = crud_platos.get_plato(db,plato_id)
