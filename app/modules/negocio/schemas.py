@@ -24,7 +24,7 @@ class ResponseNegocio(BaseModel):
     created_at: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class NegocioCondetalles(BaseModel):
@@ -39,4 +39,4 @@ class NegocioCondetalles(BaseModel):
     mesas_count: int | None = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True

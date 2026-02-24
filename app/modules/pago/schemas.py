@@ -7,7 +7,7 @@ class PagoCreate(BaseModel):
     monto: float
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {"metodo": "efectivo", "monto": 10.50}
         }
 
@@ -20,8 +20,8 @@ class PagoResponse(BaseModel):
     fecha: datetime
 
     class Config:
-        orm_mode = True
-        schema_extra = {
+        from_attributes = True
+        json_schema_extra = {
             "example": {
                 "id": 1,
                 "pedido_id": 1,
@@ -40,7 +40,7 @@ class ResumenPago(BaseModel):
     estado: str
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "pedido_id": 1,
                 "total": 100.00,
@@ -50,3 +50,7 @@ class ResumenPago(BaseModel):
             }
         }
 
+class pagoPedido(BaseModel):
+    metodo: str
+    mesa_id: int
+    monto: float

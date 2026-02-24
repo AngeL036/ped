@@ -21,7 +21,7 @@ class ResponseEmpleado(BaseModel):
     activo: bool
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class EmpleadoConUsuario(BaseModel):
@@ -33,4 +33,4 @@ class EmpleadoConUsuario(BaseModel):
     user: dict
 
     class Config:
-        orm_mode = True
+        from_attributes = True

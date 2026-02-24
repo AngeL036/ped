@@ -31,7 +31,7 @@ class ResponsePedido(BaseModel):
     created_at: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class DetalleItem(BaseModel):
@@ -44,7 +44,7 @@ class DetalleItem(BaseModel):
     subtotal: float
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class PlatilloOut(BaseModel):
@@ -54,7 +54,7 @@ class PlatilloOut(BaseModel):
     precio: float
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class DetalleOut(BaseModel):
@@ -65,6 +65,6 @@ class DetalleOut(BaseModel):
     platillo: PlatilloOut
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 

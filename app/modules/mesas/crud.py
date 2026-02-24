@@ -4,14 +4,14 @@ from app.modules.mesas.schemas import createMesa, UpdateMesa
 from fastapi import HTTPException
 
 
-def get_mesas(db:Session):
+def get_mesas(db:Session,negocio_id:int):
     """Obtener todas las mesas"""
-    return db.query(Mesa).all()
+    return db.query(Mesa).filter(Mesa.negocio_id == negocio_id).all()
 
 
-def get_mesa(db:Session, mesa_id:int):
+def get_mesa(db:Session, mesa_id:int,negocio_id:int):
     """Obtener una mesa por ID"""
-    mesa = db.query(Mesa).filter(Mesa.id == mesa_id).first()
+    mesa = db.query(Mesa).filter(Mesa.id == mesa_id, Mesa.negocio_id == negocio_id).first()
     if not mesa:
         raise HTTPException(status_code=404, detail="Mesa no encontrada")
     return mesa

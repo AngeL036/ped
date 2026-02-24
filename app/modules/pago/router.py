@@ -1,11 +1,22 @@
 from fastapi import Depends, APIRouter, HTTPException
+from app.modules.auth.auth import get_current_user
 from app.dependencies import get_db
 from sqlalchemy.orm import Session
+from app.models.user import User
 from app.modules.pago import crud
-from app.modules.pago.schemas import PagoCreate, PagoResponse, ResumenPago
+from app.modules.pago.schemas import PagoCreate, PagoResponse, ResumenPago, pagoPedido
 
 router = APIRouter(prefix="/pagos", tags=["Pagos"])
 
+
+@router.post("/cerrar", response_model=dict)
+def pagar_mesa(data: pagoPedido, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    """Registrar un pago para el pedido activo de una mesa"""
+    # use the helper property added to User
+    negocio_id = current_user.negocio_id
+    if negocio_id is None:
+        raise HTTPException(status_code=403, detail="Usuario no asociado a ningún negocio")
+    return crud.pagar_pedido(db, data.metodo, data.monto, data.mesa_id, negocio_id)
 
 @router.post("/pedido/{pedido_id}/pagar", response_model=dict)
 def pagar(pedido_id: int, data: PagoCreate, db: Session = Depends(get_db)):

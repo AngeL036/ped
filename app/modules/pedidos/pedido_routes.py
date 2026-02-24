@@ -60,7 +60,8 @@ def crearPedidoMesa(pedido: PedidoMesa, db:Session = Depends(get_db)):
 def agregar_platillo_mesa(pedido:PedidoMesa,current_user: User =Depends(get_current_user), db: Session = Depends(get_db)):
     return crud.agregar_plato(
         db=db,
+        mesero_id=current_user.id,
         mesa_id = pedido.mesa_id,
         negocio_id=current_user.empleado.negocio_id,
-        item=pedido.items[0] if pedido.items else None
+        pedido_in=pedido
     )

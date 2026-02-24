@@ -32,7 +32,9 @@ def crear_plato(
     if not current_user.empleado:
         raise HTTPException(status_code=403, detail="Solo los empleados pueden crear platos")
     
-    negocio_id = current_user.empleado.negocio_id
+    negocio_id = current_user.negocio_id
+    if negocio_id is None:
+        raise HTTPException(status_code=403, detail="Usuario no asociado a ningún negocio")
     return crud_platos.create_plato(db, plato, negocio_id)
 
 @router.put("/{plato_id}", response_model=ResponsePlato)

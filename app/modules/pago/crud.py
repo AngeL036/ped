@@ -1,5 +1,7 @@
 from sqlalchemy.orm import Session
 from app.models.pedido import Pedido
+from app.models.mesa import Mesa
+from app.models.detallePedido import DetallePedido
 from app.models.pago import Pago
 from sqlalchemy import func
 from fastapi import HTTPException
@@ -73,3 +75,41 @@ def obtener_resumen_pedido(db: Session, pedido_id: int):
         "faltante": float(max(pedido.total - total_pagado, 0)),
         "estado": pedido.estado
     }
+
+def pagar_pedido(db: Session, metodo:str, monto: float, mesa_id: int,negocio_id:int):
+    """Registrar un pago"""
+
+    mesa = db.query(Mesa).filter(Mesa.id == mesa_id).with_for_update().first()
+    pedido = db.query(Pedido).filter(
+        Pedido.estado == "abierto",
+        Pedido.mesa_id == mesa_id,
+        Pedido.negocio_id == negocio_id
+        ).first()
+    detalles = db.query(DetallePedido).filter(DetallePedido.pedido_id == pedido.id).all()
+    
+     # Calcular el total del pedido
+    total_pedido = sum(detalle.cantidad * detalle.precio_unitario for detalle in detalles)
+    if monto < total_pedido:
+        raise HTTPException(400, "El monto pagado es insuficiente para cubrir el total del pedido")
+    pago = Pago(
+        pedido_id=pedido.id,
+        metodo=metodo,
+        monto=monto
+    )
+    db.add(pago)
+    db.commit()
+    
+    # Actualizar el estado del pedido a "cerrado"
+    pedido.estado = "cerrado"
+    mesa.estado = "libre"
+    db.commit()
+    
+    return {
+        "pedido_id": pedido.id,
+        "total": total_pedido,
+        "pagado": total_pedido,
+        "faltante": 0,
+        "estado": pedido.estado
+    }
+
+    

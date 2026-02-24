@@ -19,3 +19,17 @@ class User(Base):
 
     negocios = relationship("Negocio", back_populates="owner")
     empleado = relationship("Empleado", back_populates="user", uselist=False)
+
+    @property
+    def negocio_id(self) -> int | None:
+        """Convenience property returning a negocio_id associated with the user.
+
+        - if the user is an empleado, return the empleado.negocio_id
+        - otherwise, if the user owns one or more negocios, return the first id
+        - else return None
+        """
+        if self.empleado is not None:
+            return self.empleado.negocio_id
+        if self.negocios:
+            return self.negocios[0].id
+        return None

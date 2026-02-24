@@ -25,7 +25,7 @@ class ResponsePlato(BaseModel):
     descripcion:str
     activo:bool
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class ResponsePlatos(BaseModel):
     id:int
@@ -35,7 +35,7 @@ class ResponsePlatos(BaseModel):
     
     activo:bool
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class ActivoUpdate(BaseModel):
     activo:bool
