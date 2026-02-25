@@ -12,6 +12,7 @@ class User(Base):
     password = Column(String(255), nullable=False)
     role = Column(String(50), default="owner")  # owner, admin, mesero, cocina
     is_active = Column(Boolean, default=True)
+    must_change_password= Column(Boolean, default=False)
     created_at = Column(
         DateTime(timezone=True),
         default=lambda: datetime.now(timezone.utc)

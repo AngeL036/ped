@@ -15,9 +15,10 @@ class ActualizarEstadoPedido(BaseModel):
     estado: str
 
 
+
 @router.get("/",response_model=list[ResponsePedido])
-def listar_pedidos(db:Session = Depends(get_db)):
-    return crud.get_pedidos(db)
+def listar_pedidos(current_user: User =Depends(get_current_user),db:Session = Depends(get_db)):
+    return crud.get_pedidos(db, current_user.negocio_id)
 
 @router.get("/mesa/{mesa_id}", response_model=list[DetalleOut])
 def obtenerPedidoMesa(mesa_id:int,db:Session = Depends(get_db)):

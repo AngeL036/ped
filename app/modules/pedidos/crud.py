@@ -8,8 +8,8 @@ from app.models.mesa import Mesa
 from app.models.detallePedido import DetallePedido
 from fastapi import HTTPException
 
-def get_pedidos(db:Session):
-    return db.query(Pedido).all()
+def get_pedidos(db:Session,negocio_id:int):
+    return db.query(Pedido).filter(Pedido.negocio_id == negocio_id).all()
 
 def get_pedido(db:Session, pedido_id:int):
     return db.query(Pedido).filter(Pedido.id == pedido_id).first()

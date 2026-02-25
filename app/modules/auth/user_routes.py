@@ -22,6 +22,10 @@ def obtenerUser(id:int,db:Session = Depends(get_db)):
 def login(user:UserLogin, db:Session = Depends(get_db)):
     return crud_user.login_usuario(db,user.email, user.password)
 
+@router_user.post("/change-password")
+def cambiar_password(new_password:str, current_user:User = Depends(get_current_user), db:Session = Depends(get_db)):
+    return crud_user.cambiar_password(db, current_user, new_password)
+
 @router_user.get("/me")
 def me(current_user:User = Depends(get_current_user)):
     return {"id": current_user.id, "email":current_user.email, "role":current_user.role}

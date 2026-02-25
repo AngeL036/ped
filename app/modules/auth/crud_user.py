@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from app.modules.auth.schemas import CreateUser
 from app.models.user import User
 from fastapi import HTTPException
-from app.modules.auth.services import hash_password, verify_password
+from app.modules.auth.services import hash_password, verify_password, generate_random_password
 from app.modules.auth.auth import create_access_token
 
 
@@ -27,6 +27,26 @@ def crear_usuario(db:Session,user:CreateUser):
 
     }
 
+def crear_usuario_empleado(db:Session,email:str, role:str):
+    existe_user = db.query(User).filter(User.email == email).first()
+
+    if existe_user:
+        raise HTTPException(
+            status_code=400,
+            detail="usuario ya existe"
+        )
+    temporal_password = generate_random_password()
+    nuevo_usuario = User(
+        email= email,
+        password = hash_password(temporal_password),
+        must_change_password=True,
+        role=role
+    )
+    
+    db.add(nuevo_usuario)
+    db.flush()
+    return nuevo_usuario, temporal_password
+
 def DetalleUser(db:Session,id:int):
     return db.query(User).filter(User.id == id).first()
 
@@ -42,6 +62,19 @@ def login_usuario(db:Session, email: str, password:str):
         "user": {
             "id": user.id,
             "email": user.email,
+            "role" : user.role,
             "created_at": user.created_at,
         },
+    }
+
+def cambiar_password(db:Session, user:User, new_password:str):
+    user = db.query(User).filter(User.id == user.id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    user.password = hash_password(new_password)
+    user.must_change_password = False
+    db.commit()
+    db.refresh(user)
+    return {
+        "message": "Contraseña actualizada con éxito"
     }
