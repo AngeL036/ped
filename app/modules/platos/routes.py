@@ -5,6 +5,7 @@ from app.modules.platos.schemas import CreatePlato,UpdatePlato,ResponsePlato, Re
 from app.modules.platos import platos as crud_platos
 from app.models.user import User
 from app.modules.auth.auth import get_current_user
+from app.core.roles import require_roles, Roles
 
 router = APIRouter( prefix="/platos", tags=["Platos"])
 
@@ -27,11 +28,8 @@ def obtener_plato(plato_id:int, db:Session = Depends(get_db)):
 def crear_plato(
     plato: CreatePlato,
     db:Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(require_roles(Roles.ADMIN, Roles.OWNER, Roles.CAJA))
 ):
-    if not current_user.empleado:
-        raise HTTPException(status_code=403, detail="Solo los empleados pueden crear platos")
-    
     negocio_id = current_user.negocio_id
     if negocio_id is None:
         raise HTTPException(status_code=403, detail="Usuario no asociado a ningún negocio")
@@ -41,7 +39,8 @@ def crear_plato(
 def actualizar_plato(
     plato_id: int,
     datos: UpdatePlato,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_roles(Roles.ADMIN, Roles.OWNER, Roles.CAJA))
 ):
     plato = crud_platos.get_plato(db, plato_id)
     if not plato:
@@ -50,7 +49,11 @@ def actualizar_plato(
     return crud_platos.update_plato(db, plato, datos)
 
 @router.delete("/{plato_id}", status_code=204)
-def eliminar_plato(plato_id: int, db: Session = Depends(get_db)):
+def eliminar_plato(
+    plato_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_roles(Roles.ADMIN, Roles.OWNER))
+):
     plato = crud_platos.get_plato(db, plato_id)
     if not plato:
         raise HTTPException(status_code=404, detail="Plato no encontrado")

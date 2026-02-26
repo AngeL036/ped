@@ -4,6 +4,7 @@ from app.dependencies import get_db
 from app.modules.negocio import crud
 from app.modules.negocio.schemas import CreateNegocio, UpdateNegocio, ResponseNegocio
 from app.modules.auth.auth import get_current_user
+from app.core.roles import require_roles, Roles
 from app.models.user import User
 
 
@@ -29,12 +30,9 @@ def obtener_mis_negocios(
 def crear_negocio(
     negocio: CreateNegocio,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(require_roles(Roles.OWNER))
 ):
     """Crear un nuevo negocio (solo para usuarios con rol owner)"""
-    if current_user.role != "owner":
-        raise HTTPException(status_code=403, detail="Solo los dueños pueden crear negocios")
-    
     return crud.crear_negocio(db, negocio, current_user.id)
 
 
@@ -49,7 +47,7 @@ def actualizar_negocio(
     negocio_id: int,
     datos: UpdateNegocio,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(require_roles(Roles.ADMIN, Roles.OWNER))
 ):
     """Actualizar datos de un negocio"""
     negocio = crud.obtener_negocio(db, negocio_id)
@@ -63,7 +61,7 @@ def actualizar_negocio(
 def desactivar_negocio(
     negocio_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(require_roles(Roles.ADMIN, Roles.OWNER))
 ):
     """Desactivar un negocio"""
     negocio = crud.obtener_negocio(db, negocio_id)

@@ -1,5 +1,6 @@
 from fastapi import Depends, APIRouter, HTTPException
 from app.modules.auth.auth import get_current_user
+from app.core.roles import require_roles, Roles
 from app.dependencies import get_db
 from sqlalchemy.orm import Session
 from app.models.user import User
@@ -10,9 +11,12 @@ router = APIRouter(prefix="/pagos", tags=["Pagos"])
 
 
 @router.post("/cerrar", response_model=dict)
-def pagar_mesa(data: pagoPedido, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+def pagar_mesa(
+    data: pagoPedido,
+    current_user: User = Depends(require_roles(Roles.ADMIN, Roles.OWNER, Roles.CAJA)),
+    db: Session = Depends(get_db)
+):
     """Registrar un pago para el pedido activo de una mesa"""
-    # use the helper property added to User
     negocio_id = current_user.negocio_id
     if negocio_id is None:
         raise HTTPException(status_code=403, detail="Usuario no asociado a ningún negocio")
