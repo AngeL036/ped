@@ -13,9 +13,6 @@ router = APIRouter(prefix="/pedidos", tags=["Pedidos"])
 
 class ActualizarEstadoPedido(BaseModel):
     estado: str
-
-
-
 @router.get("/",response_model=list[ResponsePedido])
 def listar_pedidos(current_user: User =Depends(get_current_user),db:Session = Depends(get_db)):
     return crud.get_pedidos(db, current_user.negocio_id)

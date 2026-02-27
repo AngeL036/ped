@@ -13,7 +13,7 @@ router = APIRouter(prefix="/pagos", tags=["Pagos"])
 @router.post("/cerrar", response_model=dict)
 def pagar_mesa(
     data: pagoPedido,
-    current_user: User = Depends(require_roles(Roles.ADMIN, Roles.OWNER, Roles.CAJA)),
+    current_user: User = Depends(require_roles(Roles.ADMIN, Roles.OWNER, Roles.MESERO )),
     db: Session = Depends(get_db)
 ):
     """Registrar un pago para el pedido activo de una mesa"""

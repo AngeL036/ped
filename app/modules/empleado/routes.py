@@ -21,13 +21,13 @@ def crear_empleado(
     return crud.crear_empleado(db, empleado, current_user)
 
 
-@router.get("/{negocio_id}", response_model=list[ResponseEmpleado])
+@router.get("/", response_model=list[ResponseEmpleado])
 def obtener_empleados(
-    negocio_id: int,
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """Obtener todos los empleados de un negocio"""
-    return crud.obtener_empleados(db, negocio_id)
+    return crud.obtener_empleados(db, current_user.negocio_id)
 
 
 @router.get("/detalle/{empleado_id}", response_model=ResponseEmpleado)
