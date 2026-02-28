@@ -3,7 +3,6 @@ from app.models.empleado import Empleado
 from app.models.user import User
 from app.modules.empleado.schemes import CreateEmpleado, UpdateEmpleado
 from fastapi import HTTPException
-from app.modules.empleado.schemes import ResponseEmpleado
 from app.modules.auth import crud_user
 
 
