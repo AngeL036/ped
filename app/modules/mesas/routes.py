@@ -1,4 +1,6 @@
 from fastapi import APIRouter,Depends, HTTPException
+from app.core.roles import Roles, require_roles
+from app.models.user import User
 from app.modules.auth.auth import get_current_user
 from app.modules.mesas import crud
 from app.modules.mesas.schemas import ResponseMesa, createMesa, UpdateMesa
@@ -10,7 +12,7 @@ router = APIRouter(prefix="/mesas", tags=["Mesas"])
 
 
 @router.get("/", response_model=list[ResponseMesa])
-def list_mesas(db:Session = Depends(get_db), current_user = Depends(get_current_user)):
+def list_mesas(db:Session = Depends(get_db), current_user:User = Depends(require_roles(Roles.ADMIN, Roles.OWNER,Roles.MESERO))):
     """Obtener todas las mesas"""
     negocio_id = current_user.negocio_id
     if negocio_id is None:
@@ -19,7 +21,7 @@ def list_mesas(db:Session = Depends(get_db), current_user = Depends(get_current_
 
 
 @router.get("/{mesa_id}", response_model=ResponseMesa)
-def obtener_mesa(mesa_id:int, db:Session = Depends(get_db), current_user = Depends(get_current_user)):
+def obtener_mesa(mesa_id:int, db:Session = Depends(get_db), current_user:User = Depends(require_roles(Roles.ADMIN, Roles.OWNER, Roles.MESERO))):
     """Obtener una mesa específica"""
     negocio_id = current_user.negocio_id
     if negocio_id is None:
@@ -28,9 +30,12 @@ def obtener_mesa(mesa_id:int, db:Session = Depends(get_db), current_user = Depen
 
 
 @router.post("/",response_model=ResponseMesa, status_code=201)
-def crear_mesa(mesa:createMesa, db:Session = Depends(get_db)):
+def crear_mesa(db:Session = Depends(get_db), current_user: User = Depends(require_roles(Roles.ADMIN, Roles.OWNER))):
     """Crear una nueva mesa"""
-    return crud.create_mesa(db, mesa)
+    negocio_id = current_user.negocio_id
+    if negocio_id is None:
+        raise HTTPException(status_code=403, detail="Usuario no asociado a ningún negocio")
+    return crud.create_mesa(db, current_user.negocio_id)
 
 
 @router.put("/{mesa_id}", response_model=ResponseMesa)
@@ -44,7 +49,10 @@ def actualizar_mesa(
 
 
 @router.delete("/{mesa_id}", status_code=200)
-def eliminar_mesa(mesa_id:int, db:Session = Depends(get_db)):
+def eliminar_mesa(
+    mesa_id:int,
+    db:Session = Depends(get_db), 
+    current_user: User = Depends(require_roles(Roles.ADMIN, Roles.OWNER))):
     """Eliminar una mesa"""
     return crud.delete_mesa(db, mesa_id)
 

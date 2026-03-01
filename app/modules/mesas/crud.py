@@ -1,3 +1,4 @@
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 from app.models.mesa import Mesa
 from app.modules.mesas.schemas import createMesa, UpdateMesa
@@ -17,12 +18,14 @@ def get_mesa(db:Session, mesa_id:int,negocio_id:int):
     return mesa
 
 
-def create_mesa(db:Session, mesa:createMesa):
+def create_mesa(db:Session, negocio_id:int):
     """Crear una nueva mesa"""
+    ultima_mesa = db.query(func.max(Mesa.numero)).filter(
+        Mesa.negocio_id == negocio_id).scalar()
     nueva_mesa = Mesa (
-        negocio_id = mesa.negocio_id,
-        numero = mesa.numero,
-        capacidad = mesa.capacidad,
+        negocio_id = negocio_id,
+        numero = ultima_mesa + 1 if ultima_mesa else 1,
+        capacidad = 4,
     )
     db.add(nueva_mesa)
     db.commit()
