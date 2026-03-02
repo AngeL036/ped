@@ -16,8 +16,8 @@ class Setting(BaseSettings):
     jwt_expire_minutes: int = Field(60, env="JWT_EXPIRE_MINUTES")
 
     #Email
-    email_user: str = Field(..., env="REMITENTE")
-    email_password: str = Field(..., env="CONTRASENA")
+    email_user: str = Field(..., env="EMAIL_USER")
+    email_password: str = Field(..., env="EMAIL_PASSWORD")
     
     @property
     def database_url(self) -> str:
