@@ -1,6 +1,6 @@
 from app.modules.auth import crud_user
 from fastapi import APIRouter, Depends
-from app.modules.auth.schemas import CreateUser, DetalleUser,UserLogin, LoginUserResponse
+from app.modules.auth.schemas import CreateUser, DetalleUser,UserLogin, LoginUserResponse, EmailRequest
 from sqlalchemy.orm import Session
 from app.dependencies import get_db
 from app.modules.auth.auth import get_current_user
@@ -11,6 +11,7 @@ router_user = APIRouter(prefix="/auth", tags=["Auth"])
 
 @router_user.post("/", status_code=201)
 def registrar_user(user:CreateUser,db:Session = Depends(get_db)):
+    print("REGISTRANDO USUARIO")
     return crud_user.crear_usuario(db,user)
 
 
@@ -20,6 +21,7 @@ def obtenerUser(id:int,db:Session = Depends(get_db)):
 
 @router_user.post("/login",response_model=LoginUserResponse)
 def login(user:UserLogin, db:Session = Depends(get_db)):
+    print("LOGIN INTENTO")
     return crud_user.login_usuario(db,user.email, user.password)
 
 @router_user.post("/change-password")
@@ -29,3 +31,11 @@ def cambiar_password(new_password:str, current_user:User = Depends(get_current_u
 @router_user.get("/me")
 def me(current_user:User = Depends(get_current_user)):
     return {"id": current_user.id, "email":current_user.email,"negocio_id":current_user.negocio_id,"role":current_user.role}
+
+@router_user.get("/verify-email")
+def verify_email(token:str, db:Session = Depends(get_db)):
+    return crud_user.verify_email(db, token)
+
+@router_user.post("/forward")
+def forward_email(request:EmailRequest,db:Session = Depends(get_db)):
+    return crud_user.forward_email(db,request.email)

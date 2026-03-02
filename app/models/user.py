@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer,String, Boolean, DateTime
+from sqlalchemy import Column, Integer,String, Boolean, DateTime, text
 from app.database import Base
 from datetime import datetime, timezone
 from sqlalchemy.orm import relationship
@@ -17,6 +17,9 @@ class User(Base):
         DateTime(timezone=True),
         default=lambda: datetime.now(timezone.utc)
     )
+
+    is_verified = Column(Boolean, nullable=False,server_default=text("0"))
+    last_verification_sent = Column(DateTime(timezone=True), nullable=True)
 
     negocios = relationship("Negocio", back_populates="owner")
     empleado = relationship("Empleado", back_populates="user", uselist=False)

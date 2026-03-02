@@ -15,6 +15,10 @@ class Setting(BaseSettings):
     jwt_algorithm: str = Field("HS256", env="JWT_ALGORITHM")
     jwt_expire_minutes: int = Field(60, env="JWT_EXPIRE_MINUTES")
 
+    #Email
+    email_user: str = Field(..., env="REMITENTE")
+    email_password: str = Field(..., env="CONTRASENA")
+    
     @property
     def database_url(self) -> str:
         return(

@@ -40,3 +40,14 @@ def get_current_user(
     if not user:
         raise HTTPException(status_code=401, detail="Usuario no encontrado")
     return user
+
+def create_verification_token(email:str) -> str:
+    expire = datetime.now(timezone.utc) + timedelta(hours=1)
+
+    payload = {
+        "sub": email,
+        "type": "email_verification",
+        "exp": expire
+    }
+
+    return jwt.encode(payload, settings.jwt_secret_key, algorithm=settings.jwt_algorithm)
