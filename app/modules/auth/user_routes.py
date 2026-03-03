@@ -14,11 +14,6 @@ def registrar_user(user:CreateUser,db:Session = Depends(get_db)):
     print("REGISTRANDO USUARIO")
     return crud_user.crear_usuario(db,user)
 
-
-@router_user.get("/{id}", response_model=DetalleUser)
-def obtenerUser(id:int,db:Session = Depends(get_db)):
-    return crud_user.DetalleUser(db,id)
-
 @router_user.post("/login",response_model=LoginUserResponse)
 def login(user:UserLogin, db:Session = Depends(get_db)):
     print("LOGIN INTENTO")
@@ -39,3 +34,7 @@ def verify_email(token:str, db:Session = Depends(get_db)):
 @router_user.post("/forward")
 def forward_email(request:EmailRequest,db:Session = Depends(get_db)):
     return crud_user.forward_email(db,request.email)
+
+@router_user.get("/{id}", response_model=DetalleUser)
+def obtenerUser(id:int,db:Session = Depends(get_db)):
+    return crud_user.DetalleUser(db,id)
