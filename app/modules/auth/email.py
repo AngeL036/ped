@@ -6,7 +6,7 @@ logger = logging.getLogger(__name__)
 
 def send_verification_email(to_email:str, token:str):
 
-    verification_link = f"https://agsa.website/restaurante/verificar?token={token}"
+    verification_link = f"https://agsa.website/api/auth/verificar?token={token}"
 
     html = f"""
     <h2>Verifica tu cuenta</h2>

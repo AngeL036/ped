@@ -32,7 +32,7 @@ def cambiar_password(new_password:str, current_user:User = Depends(get_current_u
 def me(current_user:User = Depends(get_current_user)):
     return {"id": current_user.id, "email":current_user.email,"negocio_id":current_user.negocio_id,"role":current_user.role}
 
-@router_user.get("/verify-email")
+@router_user.get("/verificar")
 def verify_email(token:str, db:Session = Depends(get_db)):
     return crud_user.verify_email(db, token)
 
