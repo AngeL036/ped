@@ -10,7 +10,7 @@ class Pedido(Base):
     id = Column(Integer, primary_key=True, index=True)
     negocio_id = Column(Integer, ForeignKey("negocios.id"), nullable=False)
     mesa_id = Column(Integer, ForeignKey("mesas.id"), nullable=False)
-    mesero_id = Column(Integer, ForeignKey("empleados.id"))
+    mesero_id = Column(Integer, ForeignKey("empleados.id"), nullable=True)
 
     total = Column(Numeric(10, 2), default=0)
     estado = Column(String(20), default="pendiente")

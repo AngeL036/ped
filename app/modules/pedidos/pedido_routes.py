@@ -6,6 +6,7 @@ from app.dependencies import get_db
 from sqlalchemy.orm import Session
 from app.modules.pedidos import crud
 from pydantic import BaseModel
+from app.core.roles import require_roles, Roles
 
 
 router = APIRouter(prefix="/pedidos", tags=["Pedidos"])
@@ -55,11 +56,19 @@ def crearPedidoMesa(pedido: PedidoMesa, db:Session = Depends(get_db)):
         pedido_data=pedido
     )
 @router.post("/mesa/", response_model=ResponsePedido)
-def agregar_platillo_mesa(pedido:PedidoMesa,current_user: User =Depends(get_current_user), db: Session = Depends(get_db)):
+def agregar_platillo_mesa(
+    pedido:PedidoMesa,
+    current_user: User = Depends(require_roles(Roles.ADMIN, Roles.OWNER, Roles.MESERO)),
+    db: Session = Depends(get_db)
+    ):
+    negocio_id = current_user.negocio_id
+    if not negocio_id:
+        raise HTTPException(status_code=400, detail="El usuariono tiene negocio asociado.")
+    mesero_id = current_user.empleado.id if current_user.empleado else None
     return crud.agregar_plato(
         db=db,
-        mesero_id=current_user.id,
+        mesero_id=mesero_id,
         mesa_id = pedido.mesa_id,
-        negocio_id=current_user.empleado.negocio_id,
+        negocio_id=negocio_id,
         pedido_in=pedido
     )

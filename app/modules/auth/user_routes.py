@@ -11,12 +11,10 @@ router_user = APIRouter(prefix="/auth", tags=["Auth"])
 
 @router_user.post("/", status_code=201)
 def registrar_user(user:CreateUser,db:Session = Depends(get_db)):
-    print("REGISTRANDO USUARIO")
     return crud_user.crear_usuario(db,user)
 
 @router_user.post("/login",response_model=LoginUserResponse)
 def login(user:UserLogin, db:Session = Depends(get_db)):
-    print("LOGIN INTENTO")
     return crud_user.login_usuario(db,user.email, user.password)
 
 @router_user.post("/change-password")
