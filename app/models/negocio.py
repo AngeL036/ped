@@ -2,7 +2,12 @@ from sqlalchemy import Column, Integer,String, Boolean, DateTime, ForeignKey
 from app.database import Base
 from datetime import datetime, timezone
 from sqlalchemy.orm import relationship
+import enum
 
+class GiroEnum(str, enum.Enum):
+    restaurante = 'restaurante'
+    tienda = 'tienda'
+    clinica = 'clinica'
 
 class Negocio(Base):
     __tablename__ = "negocios"
@@ -10,6 +15,7 @@ class Negocio(Base):
     id = Column(Integer, primary_key=True, index=True)
     owner_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     nombre = Column(String(255), nullable=False)
+    giro = Column(String(GiroEnum), nullable=False, default=GiroEnum.restaurante)
     direccion = Column(String(255))
     telefono = Column(String(50))
     activo = Column(Boolean, default=True)

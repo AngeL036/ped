@@ -9,6 +9,7 @@ from app.modules.auth.auth import create_access_token, create_verification_token
 from app.modules.auth.email import send_verification_email
 from datetime import datetime, timezone, timedelta
 from fastapi.responses import RedirectResponse
+from app.models.negocio import Negocio
 
 
 def crear_usuario(db:Session,user:CreateUser):
@@ -148,3 +149,17 @@ def forward_email(db:Session, email:str):
     db.commit()
     
     return {"message": "Se ha reenviado el correo de verificación"}
+
+def me (db:Session, user:User):
+    giro = None
+    if User.negocio_id:
+        negocio = db.query(Negocio).filter(Negocio.id == User.negocio_id).first()
+        if negocio:
+            giro = negocio.giro
+    return {
+        "id":user.id,
+        "email":user.email,
+        "negocio_id":user.negocio_id,
+        "role":user.role,
+        "giro": giro
+    }

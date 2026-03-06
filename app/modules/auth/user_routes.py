@@ -22,8 +22,8 @@ def cambiar_password(new_password:str, current_user:User = Depends(get_current_u
     return crud_user.cambiar_password(db, current_user, new_password)
 
 @router_user.get("/me")
-def me(current_user:User = Depends(get_current_user)):
-    return {"id": current_user.id, "email":current_user.email,"negocio_id":current_user.negocio_id,"role":current_user.role}
+def me(current_user:User = Depends(get_current_user),db:Session = Depends(get_db)):
+    return crud_user.me(db,current_user)
 
 @router_user.get("/verificar")
 def verify_email(token:str, db:Session = Depends(get_db)):

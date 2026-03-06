@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from datetime import datetime
+from app.models.negocio import GiroEnum
 
 
 class CreateNegocio(BaseModel):
@@ -31,6 +32,7 @@ class NegocioCondetalles(BaseModel):
     id: int
     owner_id: int
     nombre: str
+    giro:GiroEnum
     direccion: str | None
     telefono: str | None
     activo: bool
