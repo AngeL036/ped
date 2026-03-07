@@ -152,8 +152,8 @@ def forward_email(db:Session, email:str):
 
 def me (db:Session, user:User):
     giro = None
-    if User.negocio_id:
-        negocio = db.query(Negocio).filter(Negocio.id == User.negocio_id).first()
+    if user.negocio_id:
+        negocio = db.query(Negocio).filter(Negocio.id == user.negocio_id).first()
         if negocio:
             giro = negocio.giro
     return {
