@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from app.models.negocio import Negocio
 from app.models.user import User
+from app.models.empleado import Empleado
 from app.modules.negocio.schemas import CreateNegocio, UpdateNegocio
 from fastapi import HTTPException
 
@@ -20,6 +21,23 @@ def crear_negocio(db: Session, negocio_data: CreateNegocio, owner_id: int):
     )
     
     db.add(nuevo_negocio)
+    db.flush()
+    
+    empleado_existente = db.query(Empleado).filter(
+        Empleado.user_id == owner_id
+    ).first()
+    if not empleado_existente:
+        empleado_owner = Empleado(
+            nombre=owner.email.split("@")[0],
+            apellido ="",
+            edad=0,
+            user_id=owner_id,
+            negocio_id=nuevo_negocio.id,
+            rol ="owner",
+            activo=True
+        )
+        db.add(empleado_owner)
+        
     db.commit()
     db.refresh(nuevo_negocio)
     return nuevo_negocio

@@ -7,6 +7,8 @@ from sqlalchemy.orm import Session
 from app.modules.pedidos import crud
 from pydantic import BaseModel
 from app.core.roles import require_roles, Roles
+from datetime import datetime, timezone, timedelta
+from fastapi import Query
 
 
 router = APIRouter(prefix="/pedidos", tags=["Pedidos"])
@@ -15,8 +17,13 @@ router = APIRouter(prefix="/pedidos", tags=["Pedidos"])
 class ActualizarEstadoPedido(BaseModel):
     estado: str
 @router.get("/",response_model=list[ResponsePedido])
-def listar_pedidos(current_user: User =Depends(get_current_user),db:Session = Depends(get_db)):
-    return crud.get_pedidos(db, current_user.negocio_id)
+def listar_pedidos(
+    current_user: User =Depends(require_roles(Roles.OWNER,Roles.ADMIN)),
+    db:Session = Depends(get_db),
+    fecha: datetime = Query(default=None)
+    ):
+    fecha = fecha or datetime.now(timezone.utc)
+    return crud.get_pedidos(db, current_user.negocio_id,fecha)
 
 @router.get("/mesa/{mesa_id}", response_model=list[DetalleOut])
 def obtenerPedidoMesa(mesa_id:int,db:Session = Depends(get_db)):
@@ -64,7 +71,7 @@ def agregar_platillo_mesa(
     negocio_id = current_user.negocio_id
     if not negocio_id:
         raise HTTPException(status_code=400, detail="El usuariono tiene negocio asociado.")
-    mesero_id = current_user.empleado.id if current_user.empleado else None
+    mesero_id = current_user.id
     return crud.agregar_plato(
         db=db,
         mesero_id=mesero_id,

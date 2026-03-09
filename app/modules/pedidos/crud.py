@@ -7,9 +7,16 @@ from app.models.plato import Plato
 from app.models.mesa import Mesa
 from app.models.detallePedido import DetallePedido
 from fastapi import HTTPException
+from datetime import datetime, timezone, timedelta
 
-def get_pedidos(db:Session,negocio_id:int):
-    return db.query(Pedido).filter(Pedido.negocio_id == negocio_id).all()
+def get_pedidos(db:Session,negocio_id:int,fecha:datetime):
+    inicio = fecha.replace(hour=0, minute=0, second=0, microsecond=0)
+    fin = inicio + timedelta(days=1)
+    return db.query(Pedido).filter(
+        Pedido.negocio_id == negocio_id,
+        Pedido.created_at >= inicio,
+        Pedido.created_at < fin
+        ).all()
 
 def get_pedido(db:Session, pedido_id:int):
     return db.query(Pedido).filter(Pedido.id == pedido_id).first()

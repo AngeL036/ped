@@ -18,11 +18,13 @@ class UpdateEmpleado(BaseModel):
 
 class ResponseEmpleado(BaseModel):
     id: int
+    nombre: str
+    apellido:str
     user_id: int
     negocio_id: int
     rol: str
     activo: bool
-    create_at: datetime
+    create_at: datetime | None = None
 
     class Config:
         from_attributes = True
