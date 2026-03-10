@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from app.models.mesa import Mesa
 from app.models.pedido import Pedido
-from app.models.user import User
+from datetime import datetime, timedelta, timezone
 from sqlalchemy import func
 
 def obtener_mesas_ocupadas(db:Session, negocio_id: int):
@@ -20,11 +20,16 @@ def obtener_pedidos_activos(db:Session, negocio_id: int):
     ).count()
     return pedidos_activos
 
-def obtener_ventas_totales(db:Session, negocio_id: int):
+def  obtener_ventas_totales(db:Session, negocio_id: int,fecha:datetime = None):
     """Obtener ventas totales en un negocio"""
+    fecha = fecha or datetime.now(timezone.utc)
+    inicio = fecha.replace(hour=0, minute=0, second=0, microsecond=0)
+    fin = inicio + timedelta(days=1)
     total = db.query(func.sum(Pedido.total)).join(Mesa).filter(
         Mesa.negocio_id ==negocio_id,
-        Pedido.estado == "cerrado"
+        Pedido.estado == "cerrado",
+        Pedido.created_at >= inicio,
+        Pedido.created_at < fin
     ).scalar()
     return float(total) if total else 0.0
 

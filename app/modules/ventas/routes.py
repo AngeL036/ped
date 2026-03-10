@@ -6,6 +6,7 @@ from app.dependencies import get_db
 from app.modules.ventas import crud
 
 
+
 router = APIRouter(prefix="/ventas", tags=["Ventas"])
 
 @router.get("/obtener-datos")
@@ -14,6 +15,7 @@ def obtener_mesas_ocupadas(
     current_user: User = Depends(require_roles(Roles.ADMIN, Roles.OWNER))
 ):
     """Obtener mesas ocupadas en el negocio del usuario actual"""
+   
     mesasOcupadas = crud.obtener_mesas_ocupadas(db, current_user.negocio_id)
     pedidosActivos = crud.obtener_pedidos_activos(db, current_user.negocio_id)
     ventasTotales = crud.obtener_ventas_totales(db, current_user.negocio_id)
