@@ -9,8 +9,10 @@ from app.models.detallePedido import DetallePedido
 from fastapi import HTTPException
 from datetime import datetime, timezone, timedelta
 
+OFFSET = timedelta(hours=-6)
+
 def get_pedidos(db:Session,negocio_id:int,fecha:datetime):
-    inicio = fecha.replace(hour=0, minute=0, second=0, microsecond=0)
+    inicio = fecha.replace(hour=0, minute=0, second=0, microsecond=0) - OFFSET
     fin = inicio + timedelta(days=1)
     return db.query(Pedido).filter(
         Pedido.negocio_id == negocio_id,
