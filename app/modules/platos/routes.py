@@ -12,7 +12,7 @@ router = APIRouter( prefix="/platos", tags=["Platos"])
 @router.get("/", response_model=list[ResponsePlatos])
 def lista_platos(
     db:Session = Depends(get_db),
-    current_user: User = Depends(require_roles(Roles.ADMIN, Roles.OWNER))
+    current_user: User = Depends(require_roles(Roles.ADMIN, Roles.OWNER, Roles.MESERO))
     ):
     return crud_platos.get_platos(db,current_user.negocio_id)
 
@@ -34,7 +34,7 @@ def obtener_plato(plato_id:int, db:Session = Depends(get_db)):
 def crear_plato(
     plato: CreatePlato,
     db:Session = Depends(get_db),
-    current_user: User = Depends(require_roles(Roles.ADMIN, Roles.OWNER, Roles.CAJA))
+    current_user: User = Depends(require_roles(Roles.ADMIN, Roles.OWNER))
 ):
     negocio_id = current_user.negocio_id
     if negocio_id is None:
@@ -46,7 +46,7 @@ def actualizar_plato(
     plato_id: int,
     datos: UpdatePlato,
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_roles(Roles.ADMIN, Roles.OWNER, Roles.CAJA))
+    current_user: User = Depends(require_roles(Roles.ADMIN, Roles.OWNER))
 ):
     plato = crud_platos.get_plato(db, plato_id)
     if not plato:
@@ -67,7 +67,12 @@ def eliminar_plato(
     crud_platos.delete_plato(db, plato)
 
 @router.patch("/{id}/activo")
-def cambiar_activo(id:int, data:ActivoUpdate, db:Session = Depends(get_db)):
+def cambiar_activo(
+    id:int,
+    data:ActivoUpdate,
+    db:Session = Depends(get_db),
+    current_user: User = Depends(require_roles(Roles.ADMIN, Roles.OWNER))
+    ):
     plato = crud_platos.patch_activo(db,id, data.activo)
 
     if not plato:

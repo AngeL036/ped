@@ -9,6 +9,7 @@ from pydantic import BaseModel
 from app.core.roles import require_roles, Roles
 from datetime import datetime, timezone, timedelta
 from fastapi import Query
+from app.models.empleado import Empleado
 
 
 router = APIRouter(prefix="/pedidos", tags=["Pedidos"])
@@ -71,10 +72,15 @@ def agregar_platillo_mesa(
     negocio_id = current_user.negocio_id
     if not negocio_id:
         raise HTTPException(status_code=400, detail="El usuariono tiene negocio asociado.")
-    mesero_id = current_user.id
+    empleado = db.query(Empleado).filter(Empleado.user_id == current_user.id).first()
+    if not empleado:
+        raise HTTPException(
+            status_code=400,
+            detail="El usuario no tiene un perfil de empleado registrado."
+        )
     return crud.agregar_plato(
         db=db,
-        mesero_id=mesero_id,
+        mesero_id=empleado.id,
         mesa_id = pedido.mesa_id,
         negocio_id=negocio_id,
         pedido_in=pedido
