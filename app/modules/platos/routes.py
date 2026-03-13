@@ -10,12 +10,18 @@ from app.core.roles import require_roles, Roles
 router = APIRouter( prefix="/platos", tags=["Platos"])
 
 @router.get("/", response_model=list[ResponsePlatos])
-def lista_platos(db:Session = Depends(get_db)):
-    return crud_platos.get_platos(db)
+def lista_platos(
+    db:Session = Depends(get_db),
+    current_user: User = Depends(require_roles(Roles.ADMIN, Roles.OWNER))
+    ):
+    return crud_platos.get_platos(db,current_user.negocio_id)
 
 @router.get("/activos", response_model=list[ResponsePlatos])
-def lista_platos_activos(db:Session = Depends(get_db)):
-    return crud_platos.get_platos_activos(db)
+def lista_platos_activos(
+    db:Session = Depends(get_db),
+    current_user: User = Depends(require_roles(Roles.ADMIN, Roles.OWNER, Roles.MESERO))
+    ):
+    return crud_platos.get_platos_activos(db, current_user.negocio_id)
 
 @router.get("/{plato_id}", response_model=ResponsePlato)
 def obtener_plato(plato_id:int, db:Session = Depends(get_db)):

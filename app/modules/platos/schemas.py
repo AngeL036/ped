@@ -11,15 +11,18 @@ class CreatePlato(BaseModel):
     nombre: str
     precio: Decimal
     descripcion:str
+    categoria_id:int
 
 class UpdatePlato(BaseModel):
     nombre: str | None = None
     precio: Decimal | None = None
     descripcion: str | None = None
     cantidad: int | None = None
+    categoria_id: int | None = None
 
 class ResponsePlato(BaseModel):
     id:int
+    categoria_id:int
     nombre:str
     precio:Decimal
     descripcion:str

@@ -3,11 +3,14 @@ from app.models.plato import Plato
 from app.models.user import User
 from app.modules.platos.schemas import CreatePlato,UpdatePlato
 
-def get_platos(db:Session):
-    return db.query(Plato).all()
+def get_platos(db:Session, negocio_id:int):
+    return db.query(Plato).filter(Plato.negocio_id == negocio_id).all()
 
-def get_platos_activos(db:Session):
-    return db.query(Plato).filter(Plato.activo == True).all()
+def get_platos_activos(db:Session,negocio_id:int):
+    return db.query(Plato).filter(
+        Plato.activo == True,
+        Plato.negocio_id == negocio_id
+        ).all()
 
 def get_plato(db:Session, plato_id: int):
     return db.query(Plato).filter( Plato.id == plato_id).first()
@@ -21,14 +24,14 @@ def get_plato_negocio_mesa(db:Session,plato_id:int,user:User):
         Plato.negocio_id == empleado.negocio_id
     ).first()
 
-def create_plato(db:Session, plato:CreatePlato, negocio_id: int, categoria_id: int | None = None):
+def create_plato(db:Session, plato:CreatePlato, negocio_id: int):
     """Crear un nuevo plato"""
     nuevo_plato = Plato(
         nombre=plato.nombre,
         precio=plato.precio,
         descripcion=plato.descripcion,
         negocio_id=negocio_id,
-        categoria_id=categoria_id
+        categoria_id=plato.categoria_id
     )
     db.add(nuevo_plato)
     db.commit()
