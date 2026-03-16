@@ -32,6 +32,7 @@ class ResponsePlato(BaseModel):
 
 class ResponsePlatos(BaseModel):
     id:int
+    categoria_id:int
     nombre:str
     precio:Decimal
     descripcion:str

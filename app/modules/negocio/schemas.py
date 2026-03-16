@@ -7,6 +7,7 @@ class CreateNegocio(BaseModel):
     nombre: str
     direccion: str | None = None
     telefono: str | None = None
+    giro: str 
 
 
 class UpdateNegocio(BaseModel):

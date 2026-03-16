@@ -15,6 +15,7 @@ def crear_negocio(db: Session, negocio_data: CreateNegocio, owner_id: int):
     nuevo_negocio = Negocio(
         owner_id=owner_id,
         nombre=negocio_data.nombre,
+        giro=negocio_data.giro,
         direccion=negocio_data.direccion,
         telefono=negocio_data.telefono,
         activo=True
