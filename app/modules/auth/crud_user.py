@@ -106,19 +106,19 @@ def verify_email(db:Session, token:str):
         payload = jwt.decode(token, settings.jwt_secret_key, algorithms=[settings.jwt_algorithm])
         if payload.get("type") != "email_verification":
             return RedirectResponse(
-                    url="https://agsa.website/restaurante/verificacion-error"
+                    url="https://agsa.website/verificacion-error"
                     )
         email = payload.get("sub")
     except  JWTError:
         return RedirectResponse(
-            url="https://agsa.website/restaurante/verificacion-error"
+            url="https://agsa.website/verificacion-error"
         )
     
     user = db.query(User).filter(User.email == email).first()
 
     if not user:
         return RedirectResponse(
-            url="https://agsa.website/restaurante/verificacion-error"
+            url="https://agsa.website/verificacion-error"
         )
     
     if not user.is_verified:
@@ -126,7 +126,7 @@ def verify_email(db:Session, token:str):
     db.commit()
 
     return RedirectResponse(
-        url="https://agsa.website/restaurante/verificacion-exitosa"
+        url="https://agsa.website/verificacion-exitosa"
     )
 
 def forward_email(db:Session, email:str):
