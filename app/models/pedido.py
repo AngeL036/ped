@@ -1,8 +1,15 @@
-from sqlalchemy import Column, Integer,String, Numeric, DateTime, ForeignKey
+from sqlalchemy import Column, Integer,String, Numeric, DateTime, ForeignKey, Enum as SAEnum
 from app.database import Base
 from datetime import datetime, timezone, timedelta
 from sqlalchemy.orm import relationship
+import enum 
 
+class EstadoPedido(str, enum.Enum):
+    abierto   = "abierto"
+    en_cocina = "en_cocina"
+    servido   = "servido"
+    cerrado   = "cerrado"
+    cancelado = "cancelado"
 
 class Pedido(Base):
     __tablename__ = "pedidos"
@@ -12,10 +19,11 @@ class Pedido(Base):
     mesa_id    = Column(Integer, ForeignKey("mesas.id"), nullable=False)
     mesero_id  = Column(Integer, ForeignKey("empleados.id"), nullable=True)
     total      = Column(Numeric(10, 2), default=0)
-    estado     = Column(String(20), default="pendiente")
+    estado     = Column(SAEnum(EstadoPedido, default=EstadoPedido.abierto, nullable=False))
     # abierto, en_cocina, servido, cerrado, cancelado
 
     created_at = Column(DateTime(timezone=True),default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime(timezone=True), onupdate=lambda: datetime.now(timezone.utc))
 
     negocio  = relationship("Negocio", back_populates="pedidos")
     mesa     = relationship("Mesa", back_populates="pedidos")

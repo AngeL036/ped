@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, ForeignKey, Numeric
+from sqlalchemy import Column, Integer, ForeignKey, Numeric, String
 from app.database import Base
 from sqlalchemy.orm import relationship
 
@@ -14,6 +14,7 @@ class DetallePedido(Base):
     cantidad        = Column(Integer, nullable=False)
     precio_unitario = Column(Numeric(10, 2), nullable=False)
     subtotal        = Column(Numeric(10, 2), nullable=False)
+    notas           = Column(String(255))
 
     pedido   = relationship("Pedido", back_populates="detalles")
     platillo = relationship("Plato", back_populates="detalles")

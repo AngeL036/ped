@@ -23,8 +23,10 @@ class Negocio(Base):
 
     owner      = relationship("User", back_populates="negocios")
     empleados  = relationship("Empleado", back_populates="negocio", cascade="all, delete")
-    mesas      = relationship("Mesa", back_populates="negocio", cascade="all, delete")
     categorias = relationship("Categoria", back_populates="negocio", cascade="all, delete")
+
+    mesas      = relationship("Mesa", back_populates="negocio", cascade="all, delete")
     platos     = relationship("Plato", back_populates="negocio", cascade="all, delete")
     pedidos    = relationship("Pedido", back_populates="negocio", cascade="all, delete")
+    
     productos  = relationship("Producto", back_populates="negocio", cascade="all,delete")
