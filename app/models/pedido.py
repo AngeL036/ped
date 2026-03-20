@@ -16,10 +16,11 @@ class Pedido(Base):
 
     id         = Column(Integer, primary_key=True, index=True)
     negocio_id = Column(Integer, ForeignKey("negocios.id"), nullable=False)
-    mesa_id    = Column(Integer, ForeignKey("mesas.id"), nullable=False)
+    mesa_id    = Column(Integer, ForeignKey("mesas.id"), nullable=True)
     mesero_id  = Column(Integer, ForeignKey("empleados.id"), nullable=True)
+    tipo       = Column(String(20), default="mesa")
     total      = Column(Numeric(10, 2), default=0)
-    estado     = Column(SAEnum(EstadoPedido, default=EstadoPedido.abierto, nullable=False))
+    estado     = Column(SAEnum(EstadoPedido), default=EstadoPedido.abierto, nullable=False)
     # abierto, en_cocina, servido, cerrado, cancelado
 
     created_at = Column(DateTime(timezone=True),default=lambda: datetime.now(timezone.utc))

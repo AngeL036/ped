@@ -14,7 +14,6 @@ class Empleado(Base):
     negocio_id           = Column(Integer, ForeignKey("negocios.id"), nullable=False)
     rol                  = Column(String(50))  # mesero, cocina, caja, admin
     activo               = Column(Boolean, default=True)
-    must_change_password = Column(Boolean, default=False)
     created_at           = Column(DateTime(timezone=True),default=lambda: datetime.now(timezone.utc))
 
     user    = relationship("User", back_populates="empleado")
