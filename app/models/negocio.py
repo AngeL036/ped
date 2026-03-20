@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer,String, Boolean, DateTime, ForeignKey
+from sqlalchemy import Column, Integer,String, Boolean, DateTime, ForeignKey, Enum as SAEnum
 from app.database import Base
 from datetime import datetime, timezone
 from sqlalchemy.orm import relationship
@@ -15,7 +15,7 @@ class Negocio(Base):
     id = Column(Integer, primary_key=True, index=True)
     owner_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     nombre = Column(String(255), nullable=False)
-    giro = Column(String(GiroEnum), nullable=False, default=GiroEnum.restaurante)
+    giro = Column(SAEnum(GiroEnum), nullable=False, default=GiroEnum.restaurante)
     direccion = Column(String(255))
     telefono = Column(String(50))
     activo = Column(Boolean, default=True)
@@ -30,3 +30,4 @@ class Negocio(Base):
     categorias = relationship("Categoria", back_populates="negocio", cascade="all, delete")
     platos = relationship("Plato", back_populates="negocio", cascade="all, delete")
     pedidos = relationship("Pedido", back_populates="negocio", cascade="all, delete")
+    productos = relationship("Producto", back_populates="negocio", cascade="all,delete")

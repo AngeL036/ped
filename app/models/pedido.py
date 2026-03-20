@@ -3,7 +3,7 @@ from app.database import Base
 from datetime import datetime, timezone, timedelta
 from sqlalchemy.orm import relationship
 
-ZONA_MEXICO = timezone(timedelta(hours=-6))
+
 class Pedido(Base):
     __tablename__ = "pedidos"
 
@@ -18,7 +18,7 @@ class Pedido(Base):
 
     created_at = Column(
         DateTime(timezone=True),
-        default=lambda: datetime.now(ZONA_MEXICO)
+        default=lambda: datetime.now(timezone.utc)
     )
 
     negocio = relationship("Negocio", back_populates="pedidos")
