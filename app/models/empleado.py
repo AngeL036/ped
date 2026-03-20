@@ -6,19 +6,17 @@ from datetime import datetime, timezone
 class Empleado(Base):
     __tablename__ = "empleados"
 
-    id = Column(Integer, primary_key=True, index=True)
-    nombre = Column(String(100), nullable=False)
-    apellido = Column(String(100), nullable=False)
-    fecha_nacimiento = Column(DateTime, nullable=True)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    negocio_id = Column(Integer, ForeignKey("negocios.id"), nullable=False)
-    rol = Column(String(50))  # mesero, cocina, caja, admin
-    activo = Column(Boolean, default=True)
+    id                   = Column(Integer, primary_key=True, index=True)
+    nombre               = Column(String(100), nullable=False)
+    apellido             = Column(String(100), nullable=False)
+    fecha_nacimiento     = Column(DateTime, nullable=True)
+    user_id              = Column(Integer, ForeignKey("users.id"), nullable=False)
+    negocio_id           = Column(Integer, ForeignKey("negocios.id"), nullable=False)
+    rol                  = Column(String(50))  # mesero, cocina, caja, admin
+    activo               = Column(Boolean, default=True)
     must_change_password = Column(Boolean, default=False)
-    created_at = Column(
-        DateTime(timezone=True),
-        default=lambda: datetime.now(timezone.utc))
+    created_at           = Column(DateTime(timezone=True),default=lambda: datetime.now(timezone.utc))
 
-    user = relationship("User", back_populates="empleado")
+    user    = relationship("User", back_populates="empleado")
     negocio = relationship("Negocio", back_populates="empleados")
     pedidos = relationship("Pedido", back_populates="mesero")
