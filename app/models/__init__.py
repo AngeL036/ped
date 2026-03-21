@@ -7,3 +7,6 @@ from .plato import Plato
 from .pedido import Pedido
 from .detallePedido import DetallePedido
 from .pago import Pago
+from .inventarios import Inventario
+from .movimientoInventario import MovimientoInventario
+from .producto import Producto

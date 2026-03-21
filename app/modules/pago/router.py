@@ -1,5 +1,5 @@
 from fastapi import Depends, APIRouter, HTTPException
-from app.modules.auth.auth import get_current_user
+from app.dependencies.permisos import get_current_user
 from app.core.roles import require_roles, Roles
 from app.dependencies import get_db
 from sqlalchemy.orm import Session

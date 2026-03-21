@@ -4,7 +4,7 @@ from app.dependencies import get_db
 from app.modules.platos.schemas import CreatePlato,UpdatePlato,ResponsePlato, ResponsePlatos, ActivoUpdate
 from app.modules.platos import platos as crud_platos
 from app.models.user import User
-from app.modules.auth.auth import get_current_user
+from app.dependencies.permisos import get_current_user
 from app.core.roles import require_roles, Roles
 
 router = APIRouter( prefix="/platos", tags=["Platos"])

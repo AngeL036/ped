@@ -1,4 +1,4 @@
-from app.modules.auth.auth import get_current_user
+from app.dependencies.permisos import get_current_user
 from app.models.user import User
 from .schemas import PedidoItemCreate, ResponsePedido, DetalleItem,PedidoMesa, DetalleOut
 from fastapi import Depends,APIRouter,HTTPException

@@ -5,7 +5,7 @@ from app.models.user import User
 from fastapi import HTTPException
 from app.core.config import settings
 from app.modules.auth.services import hash_password, verify_password, generate_random_password
-from app.modules.auth.auth import create_access_token, create_verification_token
+from app.core.security import create_access_token,create_verification_token
 from app.modules.auth.email import send_verification_email
 from datetime import datetime, timezone, timedelta
 from fastapi.responses import RedirectResponse

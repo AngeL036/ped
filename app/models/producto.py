@@ -22,4 +22,4 @@ class Producto(Base):
     negocio         = relationship("Negocio", back_populates="productos")
     categoria       = relationship("Categoria", back_populates="productos")
     inventario      = relationship("Inventario", back_populates="producto")
-    movimiento      = relationship("MovimientoInventario", back_populates="producto")
+    movimientos      = relationship("MovimientoInventario", back_populates="producto")

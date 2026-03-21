@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from app.dependencies import get_db
 from app.modules.negocio import crud
 from app.modules.negocio.schemas import CreateNegocio, UpdateNegocio, ResponseNegocio
-from app.modules.auth.auth import get_current_user
+from app.dependencies.permisos import get_current_user
 from app.core.roles import require_roles, Roles
 from app.models.user import User
 

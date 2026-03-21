@@ -1,7 +1,7 @@
 from fastapi import APIRouter,Depends, HTTPException
 from app.core.roles import Roles, require_roles
 from app.models.user import User
-from app.modules.auth.auth import get_current_user
+from app.dependencies.permisos import get_current_user
 from app.modules.mesas import crud
 from app.modules.mesas.schemas import ResponseMesa, createMesa, UpdateMesa
 from app.dependencies import get_db

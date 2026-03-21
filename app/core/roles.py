@@ -1,5 +1,5 @@
 from fastapi import Depends, HTTPException, status
-from app.modules.auth.auth import get_current_user
+from app.dependencies.permisos import get_current_user
 
 # Enum de roles permitidos
 class Roles:
