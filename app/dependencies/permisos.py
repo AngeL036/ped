@@ -9,10 +9,13 @@ from app.models.negocio import Negocio
 
 
 def get_negocio_activo(
-    negocio_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ) -> Negocio:
+    negocio_id = current_user.negocio_id
+    if not negocio_id:
+        raise HTTPException(status_code=400, detail="El usuario no tiene un negocio asignado")
+    
     negocio = db.query(Negocio).filter(
         Negocio.id == negocio_id,
         Negocio.activo == True

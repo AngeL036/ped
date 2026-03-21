@@ -24,18 +24,18 @@ def _build_response(producto:Producto) -> dict:
         "estado_stock": _estado_stock(producto.cantidad_actual, producto.stock_minimo),
     }
 
-def create_product(db:Session, product:Producto, negocio_id:int):
+def create_product(db:Session, product:ProductoInicialCreate, negocio_id:int):
     """ crear un producto"""
     nuevo_producto = Producto(
         negocio_id = negocio_id,
-        categoria_id = product.categoria_id,
-        codigo = product.codigo,
-        nombre = product.nombre,
-        unidad = product.unidad,
-        cantidad_actual = product.cantidad_actual,
-        stock_minimo = product.stock_minimo,
-        precio_compra = product.precio_compra,
-        precio_venta = product.precio_venta,
+        categoria_id = product.producto.categoria_id,
+        codigo = product.producto.codigo,
+        nombre = product.producto.nombre,
+        unidad = product.producto.unidad,
+        cantidad_actual = product.inventario.cantidad,
+        stock_minimo = product.producto.stock_minimo,
+        precio_compra = product.precios.precio_compra,
+        precio_venta = product.precios.precio_venta,
         activo = True,
 
     )
@@ -44,7 +44,7 @@ def create_product(db:Session, product:Producto, negocio_id:int):
 
     conteo = Inventario(
         producto_id = nuevo_producto.id,
-        cantidad    = product.inventario.catidad,
+        cantidad    = product.inventario.cantidad,
         motivo      = product.inventario.motivo or " conteo inicial",
     )
     db.add(conteo)
@@ -52,7 +52,7 @@ def create_product(db:Session, product:Producto, negocio_id:int):
     movimiento = MovimientoInventario(
         producto_id = nuevo_producto.id,
         tipo = TipoMovimiento.entrada,
-        cantiidad = product.inventario.cantidad,
+        cantidad = product.inventario.cantidad,
         motivo = MotivoMovimiento.conteo_fisico,
     )
     db.add(movimiento)
