@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field, model_validator
 from typing import Optional
 from datetime import datetime
-
+from app.modules.producto.schemas import ProductoCreate, ProductoResponse
 
 # ─── Primer conteo / ajuste manual ──────────────────────
 class InventarioCreate(BaseModel):
@@ -34,14 +34,14 @@ class PreciosCreate(BaseModel):
 
 # ─── Payload completo: producto + precios + stock inicial ─
 class ProductoInicialCreate(BaseModel):
-    producto:  "ProductoCreate"     # noqa: F821 — importado en el router
+    producto:  ProductoCreate     # noqa: F821 — importado en el router
     precios:   PreciosCreate
     inventario: InventarioCreate
 
 
 # ─── Respuesta combinada ─────────────────────────────────
 class ProductoInicialResponse(BaseModel):
-    producto:   "ProductoResponse"  # noqa: F821
+    producto:  ProductoResponse  # noqa: F821
     inventario: InventarioResponse
 
     model_config = {"from_attributes": True}
