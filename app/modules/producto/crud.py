@@ -60,3 +60,7 @@ def create_product(db:Session, product:Producto, negocio_id:int):
     db.refresh(nuevo_producto)
 
     return {"producto": _build_response(nuevo_producto), "inventario": conteo}
+
+def list_product(db:Session, negocio_id:int):
+    productos = db.query(Producto).filter(Producto.negocio_id == negocio_id, Producto.activo == True).all()
+    return [_build_response(p) for p in productos]
