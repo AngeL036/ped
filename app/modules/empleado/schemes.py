@@ -5,7 +5,7 @@ from datetime import datetime
 class CreateEmpleado(BaseModel):
     nombre: str
     apellido:str
-    edad: int
+    fecha_nacimiento:datetime
     email: str 
     rol: str  # mesero, cocina, caja, admin
 

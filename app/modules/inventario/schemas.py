@@ -5,7 +5,6 @@ from app.modules.producto.schemas import ProductoCreate, ProductoResponse
 
 # ─── Primer conteo / ajuste manual ──────────────────────
 class InventarioCreate(BaseModel):
-    producto_id:  int
     cantidad:     int   = Field(..., ge=0)
     motivo:       Optional[str] = Field(None, examples=["conteo inicial", "ajuste manual"])
 

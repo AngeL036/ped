@@ -12,6 +12,7 @@ from app.modules.negocio.routes import router as negocio_router
 from app.modules.ventas.routes import router as ventas_router
 from app.modules.reportes.router import router as reportes_router
 from app.modules.categoria.router import router as categorias_router
+from app.modules.producto.router import router as producto_router
 from fastapi import FastAPI
 from app.database import engine, Base
 
@@ -35,6 +36,7 @@ app.include_router(negocio_router)
 app.include_router(ventas_router)
 app.include_router(reportes_router)
 app.include_router(categorias_router)
+app.include_router(producto_router)
 
 
 

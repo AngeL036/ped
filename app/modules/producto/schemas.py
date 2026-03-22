@@ -31,10 +31,15 @@ class ProductoUpdate(BaseModel):
 # ─── Respuesta ───────────────────────────────────────────
 class ProductoResponse(ProductoBase):
     id:              int
-    negocio_id:      int
+    categoria_id:    int | None
+    codigo:          str | None
+    nombre:          str
+    unidad:          str
     cantidad_actual: int
+    stock_minimo:    int
     precio_compra:   Optional[float] = None   # viene del último inventario
     precio_venta:    Optional[float] = None
+    activo:          bool
     estado_stock:    Optional[str]   = None   # ✅ OK / 🔸 BAJO / ⚠️ REPONER
     created_at:      datetime
 

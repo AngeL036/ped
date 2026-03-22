@@ -22,7 +22,7 @@ def crear_empleado(db: Session, empleado_data: CreateEmpleado, current_user: Use
     nuevo_empleado = Empleado(
         nombre = empleado_data.nombre,
         apellido = empleado_data.apellido,
-        edad = empleado_data.edad,
+        fecha_nacimiento = empleado_data.fecha_nacimiento,
         user_id=user.id,
         negocio_id=current_user.negocio_id,
         rol=empleado_data.rol,

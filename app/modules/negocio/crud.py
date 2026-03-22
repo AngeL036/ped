@@ -31,7 +31,7 @@ def crear_negocio(db: Session, negocio_data: CreateNegocio, owner_id: int):
         empleado_owner = Empleado(
             nombre=owner.email.split("@")[0],
             apellido ="",
-            edad=0,
+            
             user_id=owner_id,
             negocio_id=nuevo_negocio.id,
             rol ="owner",
