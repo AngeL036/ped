@@ -30,7 +30,7 @@ def create_product(db:Session, product:ProductoInicialCreate, negocio_id:int):
         negocio_id = negocio_id,
         categoria_id = product.producto.categoria_id,
         codigo = product.producto.codigo,
-        nombre = product.producto.nombre,
+        marca = product.producto.marca,
         unidad = product.producto.unidad,
         cantidad_actual = product.inventario.cantidad,
         stock_minimo = product.producto.stock_minimo,

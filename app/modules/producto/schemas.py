@@ -5,7 +5,7 @@ from datetime import datetime
 
 # ─── Base ───────────────────────────────────────────────
 class ProductoBase(BaseModel):
-    nombre:       str         = Field(..., min_length=1, max_length=100)
+    marca:       str         = Field(..., min_length=1, max_length=100)
     unidad:       str         = Field(..., examples=["pieza", "kg", "lt", "caja"])
     codigo:       Optional[str] = Field(None, max_length=30)
     categoria_id: Optional[int] = None
@@ -20,7 +20,7 @@ class ProductoCreate(ProductoBase):
 
 # ─── Editar producto ─────────────────────────────────────
 class ProductoUpdate(BaseModel):
-    nombre:       Optional[str] = Field(None, min_length=1, max_length=100)
+    codigo:       Optional[str] = Field(None, min_length=1, max_length=100)
     unidad:       Optional[str] = None
     codigo:       Optional[str] = Field(None, max_length=30)
     categoria_id: Optional[int] = None
@@ -33,7 +33,7 @@ class ProductoResponse(ProductoBase):
     id:              int
     categoria_id:    int | None
     codigo:          str | None
-    nombre:          str
+    marca:          str
     unidad:          str
     cantidad_actual: int
     stock_minimo:    int
