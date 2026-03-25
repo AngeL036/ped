@@ -19,10 +19,11 @@ class Pago(Base):
     __tablename__ = "pagos"
 
     id             = Column(Integer, primary_key=True, index=True)
-    pedido_id      = Column(Integer, ForeignKey("pedidos.id"), nullable=False)
+    pedido_id      = Column(Integer, ForeignKey("pedidos.id"), nullable=True)
+    venta_id       = Column(Integer, ForeignKey("ventas.id"), nullable=True)
+
     metodo         = Column(SAEnum(MetodoPago), nullable=False) 
     monto          = Column(Numeric(10, 2), nullable=False)
-
     monto_recibido = Column(Numeric(10, 2), nullable=True)  # lo que entregó el cliente
     cambio         = Column(Numeric(10, 2), nullable=True)  # monto_recibido - monto
     propina        = Column(Numeric(10, 2), nullable=True, default=0)
@@ -30,3 +31,4 @@ class Pago(Base):
     estado         = Column(SAEnum(EstadoPago), default=EstadoPago.completado, nullable=False) 
 
     pedido = relationship("Pedido", back_populates="pagos")
+    venta = relationship("Venta", back_populates="pagos")
