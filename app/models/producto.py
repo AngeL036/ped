@@ -23,3 +23,4 @@ class Producto(Base):
     categoria       = relationship("Categoria", back_populates="productos")
     inventario      = relationship("Inventario", back_populates="producto")
     movimientos     = relationship("MovimientoInventario", back_populates="producto")
+    detalles_venta = relationship("DetalleVenta", back_populates="producto")

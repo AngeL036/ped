@@ -16,4 +16,4 @@ class Venta(Base):
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
     detalles = relationship("DetalleVenta", back_populates="venta", cascade="all, delete")
-    pagos    = relationship("Pago", back_populates="pedido", cascade="all, delete")
+    pagos    = relationship("Pago", back_populates="venta", cascade="all, delete")
