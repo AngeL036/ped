@@ -10,3 +10,5 @@ from .pago import Pago
 from .inventarios import Inventario
 from .movimientoInventario import MovimientoInventario
 from .producto import Producto
+from .ventas import Venta
+from .detalleVenta import DetalleVenta
