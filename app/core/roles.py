@@ -8,6 +8,7 @@ class Roles:
     MESERO = "mesero"
     COCINA = "cocina"
     CAJA = "caja"
+    VENDEDOR = "vendedor"
     # Agrega más roles si es necesario
 
 

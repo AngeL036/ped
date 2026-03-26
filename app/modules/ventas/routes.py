@@ -4,11 +4,23 @@ from app.core.roles import require_roles, Roles
 from app.models.user import User
 from app.dependencies import get_db
 from app.modules.ventas import crud
+from app.modules.ventas.schemes import VentaCreate
 
 
 
 router = APIRouter(prefix="/ventas", tags=["Ventas"])
 
+
+
+@router.post("/")
+def crear_venta(
+    item_in:VentaCreate,
+    db:Session = Depends(get_db),
+    current_user: User = Depends(require_roles(Roles.ADMIN, Roles.OWNER, Roles.CAJA, Roles.VENDEDOR)),
+    
+):
+    venta = crud.venta(db,current_user.negocio_id,current_user,item_in)
+    return {"ok"}
 @router.get("/obtener-datos")
 def obtener_mesas_ocupadas(
     db: Session = Depends(get_db),
