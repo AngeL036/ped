@@ -8,5 +8,5 @@ class Ticket(Base):
 
     id = Column(Integer, primary_key=True)
     venta_id = Column(Integer, ForeignKey("ventas.id"))
-    folio = Column(String, unique=True)
+    folio = Column(String(50), unique=True)
     created_at = Column(DateTime(timezone=True), default=lambda : datetime.now(timezone.utc))

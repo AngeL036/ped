@@ -12,3 +12,5 @@ from .movimientoInventario import MovimientoInventario
 from .producto import Producto
 from .ventas import Venta
 from .detalleVenta import DetalleVenta
+from .corteCaja import CorteCaja
+from .ticket import Ticket
