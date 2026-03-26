@@ -45,9 +45,3 @@ class ProductoResponse(ProductoBase):
 
     model_config = {"from_attributes": True}
 
-class ProductoVenta(BaseModel):
-    producto_id:int
-    cantidad:int
-
-class Venta(BaseModel):
-    list[ProductoVenta]
