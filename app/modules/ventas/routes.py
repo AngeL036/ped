@@ -19,8 +19,7 @@ def crear_venta(
     current_user: User = Depends(require_roles(Roles.ADMIN, Roles.OWNER, Roles.CAJA, Roles.VENDEDOR)),
     
 ):
-    venta = crud.venta(db,current_user.negocio_id,current_user,item_in)
-    return {"ok"}
+    return crud.venta(db,current_user.negocio_id,current_user,item_in)
 @router.get("/obtener-datos")
 def obtener_mesas_ocupadas(
     db: Session = Depends(get_db),

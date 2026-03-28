@@ -48,6 +48,8 @@ def venta(db:Session,negocio_id:int,user:User, venta_in:VentaCreate):
             if (producto.cantidad_actual < it.cantidad):
                 raise HTTPException(status_code=409, detail="Stock induficiente")
             
+        for it in venta_in.items:    
+            producto = productos_dict[it.producto_id]
             sub_total = it.cantidad * producto.precio_venta
             total += sub_total
             producto.cantidad_actual -= it.cantidad
@@ -57,7 +59,7 @@ def venta(db:Session,negocio_id:int,user:User, venta_in:VentaCreate):
                 producto_id     = it.producto_id,
                 cantidad        = it.cantidad,
                 precio_unitario = producto.precio_venta,
-                sub_total       = sub_total,
+                subtotal       = sub_total,
             )
 
             db.add(detalle_venta)
@@ -76,7 +78,7 @@ def venta(db:Session,negocio_id:int,user:User, venta_in:VentaCreate):
         raise
     except Exception:
         db.rollback()
-        raise HTTPException(500, "Error al procesar la venta")
+        raise 
         
 
 def obtener_mesas_ocupadas(db:Session, negocio_id: int):
