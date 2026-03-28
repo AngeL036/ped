@@ -11,3 +11,6 @@ class Caja(BaseModel):
     diferencia: float
     total_sistema:float
     estado:str
+
+class AbrirCaja(BaseModel):
+    monto_inicial:float
