@@ -19,7 +19,7 @@ class CorteCaja(Base):
     monto_inicial  = Column(Numeric(10, 2), nullable=False)
     monto_final    = Column(Numeric(10, 2), nullable=True)
     total_sistema  = Column(Numeric(10,2), nullable=True)
-    diferencia     = Column(Numeric(10,2), nullable=False)
+    diferencia     = Column(Numeric(10,2), nullable=True)
     estado         = Column(SAEnum(EstadoCaja), default=EstadoCaja.abierto , nullable=False)
     created_at     = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     
