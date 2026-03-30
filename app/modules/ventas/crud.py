@@ -10,6 +10,34 @@ from fastapi import HTTPException
 from app.modules.ventas.schemes import VentaCreate
 from app.models.producto import Producto
 from app.models.detalleVenta import DetalleVenta
+from app.models.pago import Pago
+
+
+
+
+def _get_venta_o_404(db:Session, venta_id:int,negocio_id:int) -> Venta:
+    v = db.query(Venta).filter(
+        Venta.id == venta_id,
+        Venta.negocio_id == negocio_id
+    ).first()
+    if not v:
+        raise HTTPException(404,"Venta no encontrada")
+    return v
+
+def _detalles_para_ticket(db:Session,venta_id:int) -> list[dict]:
+    """Retorna los renglones del ticket listos para email y Whatsapp"""
+    detalles = (db.query(DetalleVenta).filter(DetalleVenta.venta_id == venta_id).all())
+
+    resultado = []
+    for d in detalles:
+        producto = db.query(Producto).filter(Producto.id == d.producto_id).first()
+        resultado.append({
+            "producto": producto.marca if producto else f"#{d.producto_id}",
+            "cantidad": d.cantidad,
+            "precio_unitario": float(d.precio_unitario),
+            "subtotal": float(d.subtotal),
+        })
+    return resultado
 
 
 def venta(db:Session,negocio_id:int,user:User, venta_in:VentaCreate):
@@ -71,7 +99,8 @@ def venta(db:Session,negocio_id:int,user:User, venta_in:VentaCreate):
 
         return {
             "mensaje":"Venta confirmada",
-            "venta_id": nueva_venta.id
+            "venta_id": nueva_venta.id,
+            "total": float(total)
         }
     except HTTPException:
         db.rollback()
@@ -79,7 +108,74 @@ def venta(db:Session,negocio_id:int,user:User, venta_in:VentaCreate):
     except Exception:
         db.rollback()
         raise 
-        
+
+
+#---- Registrar pago ----------------------------------------------------------------
+def registrar_pago(db:Session, venta_id:int, negocio_id:int, pago_in:PagoCreate):
+    """
+    Registrar el pago de una venta y calcula el cambio.
+    Valida que el monto sea suficiente para cubrir el total de la venta.
+    """
+    v = _get_venta_o_404(db, venta_id, negocio_id)
+
+    total = float(v.total)
+    monto_pagado = float(pago_in.monto)
+    
+    if monto_pagado < total:
+        raise HTTPException(400, f"El monto pagado es insuficiente. Total: {total:.2f}, Pagado: {monto_pagado:.2f}")
+    
+    cambio = round(monto_pagado - total, 2)
+
+    pago = Pago(
+        venta_id = venta_id,
+        monto = monto_pagado,
+        cambio = cambio,
+        metodo = pago_in.metodo
+    )
+    db.add(pago)
+    db.commit()
+    db.refresh(pago)
+
+    return {
+        "venta_id": venta_id,
+        "total": total,
+        "monto_pagado": monto_pagado,
+        "cambio": cambio,
+        "metodo": pago_in.metodo
+    }
+
+#---Enviar Ticket----------------------------------------------------------------
+
+def enviar_ticket_por_correo(db:Session, venta_id:int, negocio_id:int, email:str):
+    """Envía el ticket de una venta por correo electrónico"""
+    v = _get_venta_o_404(db, venta_id, negocio_id)
+    detalles = _detalles_para_ticket(db, venta_id)
+
+    try:
+        enviar_ticket_correo(email,venta_id, float(v.total), detalles)
+    except Exception as e:
+        raise HTTPException(500, f"Error al enviar el correo: {str(e)}")
+    
+
+    return {
+        "mensaje": f"Ticket enviado a {email}"
+    }
+
+def enviar_ticket_por_whatsapp(db:Session, venta_id:int, negocio_id:int, telefono:str):
+    """Envía el ticket de una venta por WhatsApp"""
+    v = _get_venta_o_404(db, venta_id, negocio_id)
+    detalles = _detalles_para_ticket(db, venta_id)
+
+    try:
+        enviar_ticket_whatsapp(telefono, venta_id, float(v.total), detalles)
+    except Exception as e:
+        raise HTTPException(500, f"Error al enviar el mensaje de WhatsApp: {str(e)}")
+    
+    return {
+        "mensaje": f"Ticket enviado a WhatsApp {telefono}"
+    }
+       
+# ── Dashboard ───────────────────────────────────────────────────────────────
 
 def obtener_mesas_ocupadas(db:Session, negocio_id: int):
     """Obtener mesas ocupadas en un negocio"""
