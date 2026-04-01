@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
-from requests import Session
+from sqlalchemy.orm import Session
 from app.core.roles import require_roles, Roles
 from app.models.user import User
 from app.dependencies import get_db
-from app.modules.pago.schemas import PagoCreateProducto, PagoResponseProducto
-from app.modules.ticket.schemas import TicketCorreoRequest, TicketWhatsAppRequest
+from app.modules.pago.schemas import PagoCreateProducto
+from app.modules.ticket.schemas import  TicketEnvioRequest
 from app.modules.ventas import crud
 from app.modules.ventas.schemes import VentaCreate
 
@@ -28,7 +28,7 @@ def crear_venta(
 
 #--- POST /ventas/{venta_id}/pago-------------------------
 
-@router.post("/{venta_id}/pago", response_model=PagoResponseProducto)
+@router.post("/{venta_id}/pago")
 def registrar_pago(
     venta_id: int,
     pago_in: PagoCreateProducto,
@@ -42,29 +42,23 @@ def registrar_pago(
     return crud.registrar_pago(db, venta_id, current_user.negocio_id, pago_in)
 
 #-----POST /ventas/{venta_id}/ticket/correo-----------------------------
-@router.post("/{venta_id}/ticket/correo")
-def enviar_ticket_por_correo(
+@router.post("/{venta_id}/enviar-ticket/")
+def enviar_ticket(
     venta_id: int,
-    body: TicketCorreoRequest,
+    body: TicketEnvioRequest,
     db:Session = Depends(get_db),
     current_user: User = _ROL_CAJA,
 ):
     """
-    Envia el ticket de la venta al correo del cliente.
+    Envía el ticket de la venta por correo o WhatsApp.
+    body: { medio: 'correo' | 'whatsapp' | 'otro', valor: '...' }
     """
-    return crud.enviar_ticket_por_correo(db, venta_id, current_user.negocio_id, body.correo)
-#------POST /ventas/{venta_id}/ticket/whatsapp-----------------------------
-@router.post("/{venta_id}/ticket/whatsapp")
-def enviar_ticket_por_whatsapp(
-    venta_id: int,
-    body: TicketWhatsAppRequest,
-    db:Session = Depends(get_db),
-    current_user: User = _ROL_CAJA,
-):
-    """
-    Envia el ticket de la venta al numero de whatsapp del cliente.
-    """
-    return crud.enviar_ticket_por_whatsapp(db, venta_id, current_user.negocio_id, body.numero)
+    if body.medio == "correo":
+        return crud.enviar_ticket_por_correo(db, venta_id, current_user.negocio_id, body.valor)
+    elif body.medio == "whatsapp":
+        return crud.enviar_ticket_por_whatsapp(db, venta_id, current_user.negocio_id, body.valor)
+    else:
+        raise HTTPException(400, "Medio de envío no soportado. Use 'correo' o 'whatsapp'.")
 
 
 

@@ -11,7 +11,9 @@ from app.modules.ventas.schemes import VentaCreate
 from app.models.producto import Producto
 from app.models.detalleVenta import DetalleVenta
 from app.models.pago import Pago
-
+from app.services.Email import enviar_ticket_correo
+from app.services.Whatsapp import enviar_ticket_whatsapp
+from app.modules.pago.schemas import PagoCreate
 
 
 
@@ -119,7 +121,7 @@ def registrar_pago(db:Session, venta_id:int, negocio_id:int, pago_in:PagoCreate)
     v = _get_venta_o_404(db, venta_id, negocio_id)
 
     total = float(v.total)
-    monto_pagado = float(pago_in.monto)
+    monto_pagado = float(pago_in.monto_pagado)
     
     if monto_pagado < total:
         raise HTTPException(400, f"El monto pagado es insuficiente. Total: {total:.2f}, Pagado: {monto_pagado:.2f}")

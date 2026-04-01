@@ -1,21 +1,17 @@
 from pydantic import BaseModel, EmailStr
+from typing import Literal
 from pydantic import field_validator
 
 
-
-
-class TicketCorreoRequest(BaseModel):
-    correo: EmailStr
-
-class TicketWhatsAppRequest(BaseModel):
-    numero: str
-
-    @field_validator("numero")
+class TicketEnvioRequest(BaseModel):
+    medio: Literal["correo", "whatsapp", "otro"]
+    valor: str  # el correo o el número de teléfono
+ 
+    @field_validator("valor")
     @classmethod
-    def validar_numero(cls, v:str):
-        limpio = v.replace(" ", "").replace("-", "")
-        if not limpio.startswith("+"):
-            raise ValueError("El numero debe incluir codigo de pais, ej: +52...")
-        if len(limpio) < 10:
-            raise ValueError("El numero es demasiado corto")
-        return limpio
+    def validar_valor(cls, v: str, info) -> str:
+        v = v.strip()
+        if not v:
+            raise ValueError("El valor no puede estar vacío")
+        return v
+ 

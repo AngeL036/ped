@@ -19,6 +19,16 @@ class Setting(BaseSettings):
     email_user: str = Field(..., env="EMAIL_USER")
     email_password: str = Field(..., env="EMAIL_PASSWORD")
     
+    smtp_host: str = Field("smtp.gmail.com", env="SMTP_HOST")
+    smtp_port: int = Field(587, env="SMTP_PORT")
+
+    callmebot_apikey: str = Field("", env="CALLMEBOT_APIKEY")
+    
+    @property
+    def CALLMEBOT_APIKEY(self) -> str:
+        return self.callmebot_apikey
+    
+
     @property
     def database_url(self) -> str:
         return(
