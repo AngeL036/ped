@@ -5,7 +5,7 @@ from app.modules.caja.schemas import Caja
 from sqlalchemy.orm import Session
 from app.dependencies import get_db
 from app.modules.caja import crud
-from app.modules.caja.schemas import AbrirCaja
+from app.modules.caja.schemas import AbrirCaja, CerrarCaja
 
 router = APIRouter(prefix="/caja", tags=["cajas"])
 
@@ -23,3 +23,10 @@ def abrir_caja(
     ):
     return crud.abrir_caja(db,current_user,body.monto_inicial)
 
+@router.post("/cerrarCaja")
+def cerrar_caja(
+    body:CerrarCaja,
+    db: Session = Depends(get_db),
+    current_user: User = Depends( require_roles(Roles.ADMIN, Roles.CAJA, Roles.OWNER))
+):
+    return crud.cerrar_caja(db,current_user, body.monto_final)

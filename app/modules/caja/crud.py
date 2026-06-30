@@ -8,6 +8,7 @@ from datetime import datetime, timezone
 
 
 
+
 def abrir_caja(db:Session,user:User, monto_inicial:float):
     caja_abierta = db.query(CorteCaja)\
     .filter(CorteCaja.usuario_id == user.id)\
@@ -44,6 +45,7 @@ def cerrar_caja(db:Session, user:User, monto_final:float):
         raise HTTPException(404, "No hay caja abierta")
     
     total_ventas = db.query(func.sum(Venta.total))\
+        .filter(Venta.negocio_id == user.negocio_id)\
         .filter(Venta.vendedor ==user.id)\
         .filter(Venta.created_at >= caja.fecha_apertura)\
         .scalar() or 0

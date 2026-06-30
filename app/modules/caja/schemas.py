@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 
@@ -14,3 +14,6 @@ class Caja(BaseModel):
 
 class AbrirCaja(BaseModel):
     monto_inicial:float
+
+class CerrarCaja(BaseModel):
+    monto_final: float = Field(...,ge=0)
