@@ -55,7 +55,7 @@ def cerrar_caja(db:Session, user:User, monto_final:float):
     caja.total_sistema = total_ventas
 
     esperado = caja.monto_inicial + total_ventas
-    caja.diferencia = monto_final - esperado
+    caja.diferencia = monto_final - float(esperado)
 
     caja.estado = "cerrado"
 
